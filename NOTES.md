@@ -30,3 +30,10 @@
 - Reseed database: `go run reseed/main.go`
 - Start api server: `go run api/main.go`
 - Run integration tests: `go run test/unit/main.go`
+
+
+## TODO if enough time
+
+### database
+- using UUID instead of ints
+- add timestamps
