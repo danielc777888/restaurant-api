@@ -30,6 +30,7 @@
 - Reseed database: `go run reseed/main.go`
 - Start api server: `go run api/main.go`
 - Run all tests: `go test ./...`
+- Browse here to read the api docs: `http://localhost:8080/swagger/index.html`
 
 
 ## TODO if enough time
