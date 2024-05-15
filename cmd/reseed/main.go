@@ -10,7 +10,7 @@ import (
 )
 
 func main() {
-	fmt.Println("Reseeding database")
+	fmt.Println("Reseeding database...")
 	dsn := "host=localhost user=dancingponysvc password=password dbname=dancingpony port=5432"
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
@@ -23,18 +23,19 @@ func main() {
 	db.Migrator().CreateTable(&data.Restaurant{})
 	db.Migrator().CreateTable(&data.Dish{})
 
+	fmt.Println("Seeding Restaurant data...")
 	db.Create(&data.Restaurant{
 		Name: "The Orc Shack",
 		Dishes: []data.Dish{
-			{Name: "Caviar", Description: "Fish eggs", Price: 11},
-			{Name: "Burger and Fries", Description: "Big portions", Price: 22},
+			{Name: "Caviar", Description: "Fish eggs, tasty morsels", Price: 11},
+			{Name: "Burger and Fries", Description: "Big portions of oily food", Price: 22},
 		}})
 
 	db.Create(&data.Restaurant{
 		Name: "Dwarf Diner",
 		Dishes: []data.Dish{
 			{Name: "Cheese platter", Description: "Variety of cheeses from middle earth", Price: 50},
-			{Name: "Sourdough", Description: "Handmade sourdough bread", Price: 40},
+			{Name: "Sourdough", Description: "Elvin sourdough bread", Price: 40},
 		}})
 
 }

@@ -1,0 +1,20 @@
+basePath: /api/v1
+info:
+  contact: {}
+paths:
+  /restaurants:
+    get:
+      consumes:
+      - application/json
+      description: get restaurants
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: Restaurant
+      summary: Gets a list of restaurants
+      tags:
+      - example
+swagger: "2.0"

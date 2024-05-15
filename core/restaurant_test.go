@@ -13,5 +13,5 @@ func TestChangeName(t *testing.T) {
 		Name: "Test",
 	}
 	restaurant2 := ChangeName(restaurant, "New Name")
-	assert.Equal(t, restaurant2.Name, "New Names")
+	assert.Equal(t, restaurant2.Name, "New Name")
 }

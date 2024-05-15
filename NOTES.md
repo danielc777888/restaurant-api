@@ -16,7 +16,6 @@
 - https://aistudio.google.com/app/prompts/sentiment-analysis-chat
 - Use google api
 
-## Property based testig Rapid
 
 ## For async tasks
 - Use https://github.com/hibiken/asynq
@@ -26,14 +25,33 @@
 - Install go, checkout solution
 - Install docker
 - Compose and run containers: `docker compose up -d`
-- Run unit tests: `go run test/unit/main.go`
+- Resolve project dependencies: `go mod tidy`
+- Build packages: `go build ./...`
 - Reseed database: `go run reseed/main.go`
 - Start api server: `go run api/main.go`
-- Run integration tests: `go run test/unit/main.go`
+- Run all tests: `go test ./...`
 
 
 ## TODO if enough time
 
+### api perf
+- db connection pool
+- redis caching, daily eviction for restaurants + dishes
+- hourly for ratings
+- benchmark before and after
+
+### prometheus for observability
+
+### config
+- use .env for env configs
+- database
+- gemini api key
+
 ### database
 - using UUID instead of ints
 - add timestamps
+- use db pool, common object
+- use transactions
+
+### tests
+- property based tests with rapid

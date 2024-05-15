@@ -24,8 +24,19 @@ type Restaurant struct {
 var dsn = "host=localhost user=dancingponysvc password=password dbname=dancingpony port=5432"
 var db, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
 
+// @BasePath /api/v1
+
+// GetRestaurants godoc
+// @Summary Gets a list of restaurants
+// @Schemes
+// @Description get restaurants
+// @Tags example
+// @Accept json
+// @Produce json
+// @Success 200 {Restaurant} []Restaurant
+// @Router /restaurants [get]
 func GetRestaurants(c *gin.Context) {
-	fmt.Println("Getting restaruants")
+	fmt.Println("Getting restaurants")
 	var restaurants []data.Restaurant
 	if err != nil {
 		panic("Failed to connect database")
