@@ -1,15 +1,15 @@
-# Tasks (0/16)
+# Tasks (6/16)
 
 ## Task 1
 
 | Task | Done  | Ref |
 | --- | --- | --- |
-| Create Dish | | |
-| View Dish | | |
-| List Dish | | |
-| Update Dish | | |
-| Delete Dish | | |
-| Create Rating | | |
+| Create Dish | **Y** | |
+| View Dish | **Y** | |
+| List Dish | **Y** | |
+| Update Dish | **Y** | |
+| Delete Dish | **Y** | |
+| Create Rating | **Y** | |
 
 ## Task 2
 
@@ -34,4 +34,4 @@
 | --- | --- | --- |
 | Sentiment Analysis (Reviews) | | |
 | API Rate-Limiting | | |
-| API Rate-Limiting | | |                          
+| OAuth & SSO | | |                          

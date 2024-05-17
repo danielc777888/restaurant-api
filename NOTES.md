@@ -61,7 +61,7 @@
 ### database
 - using UUID instead of ints
 - add timestamps
-- use db pool, common object
+- use db pool
 - use transactions
 
 ### tests
@@ -69,6 +69,9 @@
 
 ### swagger docs
 - swag init -g api/restaurant.go
+
+### readings
+- addresses/pointers/value/copy
 
 ### References
 - https://github.com/lemoncode21/golang-crud-gin-gorm

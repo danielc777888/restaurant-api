@@ -5,5 +5,6 @@ type Dish struct {
 	Name         string
 	Description  string
 	Price        uint
+	Ratings      []Rating
 	RestaurantID uint
 }
