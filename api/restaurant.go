@@ -7,7 +7,6 @@ import (
 	"middleearth/eateries/data"
 
 	"github.com/gin-gonic/gin"
-	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
@@ -16,13 +15,21 @@ type Restaurant struct {
 	Name string `json:"name"`
 }
 
+type RestaurantAPI struct {
+	Db *gorm.DB
+}
+
+func NewRestaurantAPI(Db *gorm.DB) *RestaurantAPI {
+	return &RestaurantAPI{Db: Db}
+}
+
 // var restaurants = []Restaurant{
 // 	{ID: "1", Name: "Rest1"},
 // 	{ID: "2", Name: "Rest2"},
 // }
 
-var dsn = "host=localhost user=dancingponysvc password=password dbname=dancingpony port=5432"
-var db, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
+// var dsn = "host=localhost user=dancingponysvc password=password dbname=dancingpony port=5432"
+// var db, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
 
 // @BasePath /api/v1
 
@@ -35,13 +42,10 @@ var db, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
 // @Produce json
 // @Success 200 {Restaurant} []Restaurant
 // @Router /restaurants [get]
-func GetRestaurants(c *gin.Context) {
+func (r *RestaurantAPI) GetRestaurants(c *gin.Context) {
 	fmt.Println("Getting restaurants")
 	var restaurants []data.Restaurant
-	if err != nil {
-		panic("Failed to connect database")
-	}
-	db.Find(&restaurants)
+	r.Db.Find(&restaurants)
 	c.IndentedJSON(http.StatusOK, mapRestaurantsToJSON(restaurants))
 }
 

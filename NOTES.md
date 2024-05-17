@@ -8,6 +8,7 @@
 
 
 
+
 ## Plan
 - Wed : Task 1
 - Thur : Task 2
@@ -33,6 +34,7 @@
 - Install go, checkout solution
 - Install docker
 - Compose and run containers: `docker compose up -d`
+- To restart the containers run: `docker compose restart`
 - Resolve project dependencies: `go mod tidy`
 - Build packages: `go build ./...`
 - Reseed database: `go run reseed/main.go`
@@ -67,3 +69,6 @@
 
 ### swagger docs
 - swag init -g api/restaurant.go
+
+### References
+- https://github.com/lemoncode21/golang-crud-gin-gorm

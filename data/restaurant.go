@@ -5,11 +5,3 @@ type Restaurant struct {
 	Name   string
 	Dishes []Dish
 }
-
-type Dish struct {
-	ID           uint
-	Name         string
-	Description  string
-	Price        uint
-	RestaurantID uint
-}
