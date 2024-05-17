@@ -1,5 +1,13 @@
 # NOTES
 
+## Setup
+
+## Tests
+
+## API Docs
+
+
+
 ## Plan
 - Wed : Task 1
 - Thur : Task 2
@@ -56,3 +64,6 @@
 
 ### tests
 - property based tests with rapid
+
+### swagger docs
+- swag init -g api/restaurant.go
