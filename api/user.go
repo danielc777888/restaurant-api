@@ -4,10 +4,14 @@ import (
 	"fmt"
 	"middleearth/eateries/data"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt/v5"
 	"gorm.io/gorm"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 // requests
@@ -51,8 +55,18 @@ func (userAPI *UserAPI) RegisterUser(c *gin.Context) {
 	// unique: email address
 
 	// hash password
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), 10)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Failed to hash password.",
+		})
+		return
+	}
 
 	dbUser := mapRegisterUserToDB(user)
+	dbUser.Password = string(hashedPassword)
+
 	result := userAPI.Db.Create(&dbUser)
 	fmt.Printf("DB result error %s, rows %d", result.Error, result.RowsAffected)
 	c.IndentedJSON(http.StatusOK, dbUser.ID)
@@ -67,18 +81,42 @@ func (userAPI *UserAPI) LoginUser(c *gin.Context) {
 	// hash password
 
 	// find in db
-	userAPI.Db.Where("email_address = ? AND password = ?", user.EmailAddress, user.Password).First(&dbUser)
+	userAPI.Db.Where("email_address = ?", user.EmailAddress).First(&dbUser)
+
+	err := bcrypt.CompareHashAndPassword([]byte(dbUser.Password), []byte(user.Password))
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Invalid email or password",
+		})
+		return
+	}
 
 	// generate a jwt token
-	token := "wqwqwqwqwq"
-	dbUser.Token = &token
-	now := time.Now()
-	dbUser.TokenCreatedAt = &now
-	// save token in db
-	result := userAPI.Db.Save(&dbUser)
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"sub": dbUser.ID,
+		"exp": time.Now().Add(time.Hour * 24 * 30).Unix(),
+	})
 
-	fmt.Printf("DB result error %s, rows %d", result.Error, result.RowsAffected)
-	c.IndentedJSON(http.StatusOK, mapUserToJSON(dbUser))
+	// Sign and get the complete encoded token as a string using the secret
+	jwtSecret := os.Getenv("JWT_SECRET")
+	signedToken, err := token.SignedString([]byte(jwtSecret))
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Failed to create token",
+		})
+		return
+	}
+
+	// dbUser.Token = &token
+	// now := time.Now()
+	// dbUser.TokenCreatedAt = &now
+	// // save token in db
+	// result := userAPI.Db.Save(&dbUser)
+
+	//fmt.Printf("DB result error %s, rows %d", result.Error, result.RowsAffected)
+	c.IndentedJSON(http.StatusOK, mapUserToJSON(dbUser, signedToken))
 }
 
 // func (dishApi *DishAPI) UpdateDish(c *gin.Context) {
@@ -130,12 +168,12 @@ func mapRegisterUserToDB(user RegisterUser) data.User {
 	}
 }
 
-func mapUserToJSON(user data.User) LoggedInUser {
+func mapUserToJSON(user data.User, token string) LoggedInUser {
 	return LoggedInUser{
 		ID:           user.ID,
 		Name:         user.Name,
 		EmailAddress: user.EmailAddress,
-		Token:        *user.Token,
+		Token:        token,
 	}
 }
 

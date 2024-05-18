@@ -30,9 +30,10 @@ curl http://localhost:8080/api/v1/dishes \
 
 ## Delete Dish
 ```
-curl http://localhost:8080/api/v1/dishes/6 \
+curl http://localhost:8080/api/v1/dishes/4 \
     --include \
     --header "Content-Type: application/json" \
+    --header "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MTg2MDE2MjIsInN1YiI6Mn0.TmNqSNVjodz8IJ_KudXzKqnL37JW7WEIIfFEFGEGawA" \
     --request "DELETE"
 ```
 
@@ -59,7 +60,7 @@ curl http://localhost:8080/api/v1/users/register \
 curl http://localhost:8080/api/v1/users/login \
     --include \
     --header "Content-Type: application/json" \
-    --request "PATCH" \
+    --request "POST" \
     --data '{"emailAddress": "gimli@erabo.com","password": "superpassword"}'
 ```
 

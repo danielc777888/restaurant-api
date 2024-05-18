@@ -1,17 +1,24 @@
 package main
 
 import (
-	"fmt"
+	"log"
+	"os"
 
 	"middleearth/eateries/data"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+
+	"github.com/joho/godotenv"
 )
 
 func main() {
-	fmt.Println("Reseeding database...")
-	dsn := "host=localhost user=dancingponysvc password=password dbname=dancingpony port=5432"
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+	log.Println("Reseeding database...")
+	dsn := os.Getenv("DB_DSN")
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		panic("Failed to connect database")
@@ -27,7 +34,7 @@ func main() {
 	db.Migrator().CreateTable(&data.Rating{})
 	db.Migrator().CreateTable(&data.User{})
 
-	fmt.Println("Seeding Restaurant data...")
+	log.Println("Seeding Restaurant data...")
 	db.Create(&data.Restaurant{
 		Name: "The Orc Shack",
 		Dishes: []data.Dish{

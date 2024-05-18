@@ -6,5 +6,5 @@ type Dish struct {
 	Description  string
 	Price        uint
 	Ratings      []Rating
-	RestaurantID uint
+	RestaurantID uint `gorm:"index"`
 }

@@ -7,7 +7,7 @@ import (
 type User struct {
 	ID             uint
 	Name           string
-	EmailAddress   string
+	EmailAddress   string `gorm:"unique"`
 	Password       string
 	Locked         bool
 	LoginAttempts  uint

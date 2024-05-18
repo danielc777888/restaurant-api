@@ -2,6 +2,6 @@ package data
 
 type Restaurant struct {
 	ID     uint
-	Name   string
+	Name   string `gorm:"unique"`
 	Dishes []Dish
 }

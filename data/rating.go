@@ -6,5 +6,5 @@ type Rating struct {
 	ID          uint
 	Description string
 	Sentiment   sql.NullBool
-	DishID      uint
+	DishID      uint `gorm:"index"`
 }

@@ -76,5 +76,8 @@
 
 ### References
 - https://go.dev/
-- https://cacm.acm.org/research/the-go-programming-language-and-environment/
 - https://github.com/lemoncode21/golang-crud-gin-gorm
+- https://medium.com/readytowork-org/secure-your-go-web-application-jwt-authentication-e65a5af7c049
+- https://gin-gonic.com/docs/
+- https://gorm.io/
+- https://cacm.acm.org/research/the-go-programming-language-and-environment/
