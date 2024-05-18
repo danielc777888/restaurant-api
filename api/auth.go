@@ -3,6 +3,7 @@ package api
 import (
 	"errors"
 	"fmt"
+	"log"
 	"middleearth/eateries/data"
 	"net/http"
 	"os"
@@ -52,6 +53,11 @@ func (authAPI *AuthAPI) Authenticate(c *gin.Context) {
 		authAPI.Db.First(&user, claims["sub"])
 
 		if user.ID == 0 {
+			c.AbortWithStatus(http.StatusUnauthorized)
+		}
+
+		if user.Locked == true {
+			log.Println("User account locked:", user.ID)
 			c.AbortWithStatus(http.StatusUnauthorized)
 		}
 

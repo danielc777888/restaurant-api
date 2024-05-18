@@ -1,7 +1,9 @@
 package api
 
 import (
+	"errors"
 	"fmt"
+	"log"
 	"middleearth/eateries/data"
 	"net/http"
 	"os"
@@ -81,11 +83,26 @@ func (userAPI *UserAPI) LoginUser(c *gin.Context) {
 	// hash password
 
 	// find in db
-	userAPI.Db.Where("email_address = ?", user.EmailAddress).First(&dbUser)
+	result := userAPI.Db.Where("email_address = ?", user.EmailAddress).First(&dbUser)
+	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Invalid email or password",
+		})
+		return
+	}
+
+	if dbUser.Locked == true {
+		log.Println("User account locked: ", dbUser.ID)
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "User account locked, please contact support",
+		})
+		return
+	}
 
 	err := bcrypt.CompareHashAndPassword([]byte(dbUser.Password), []byte(user.Password))
 
 	if err != nil {
+		loginAttempt(dbUser, userAPI)
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "Invalid email or password",
 		})
@@ -101,15 +118,22 @@ func (userAPI *UserAPI) LoginUser(c *gin.Context) {
 	// Sign and get the complete encoded token as a string using the secret
 	jwtSecret := os.Getenv("JWT_SECRET")
 	signedToken, err := token.SignedString([]byte(jwtSecret))
-
 	if err != nil {
+		loginAttempt(dbUser, userAPI)
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "Failed to create token",
 		})
 		return
 	}
-
 	c.IndentedJSON(http.StatusOK, mapUserToJSON(dbUser, signedToken))
+}
+
+func loginAttempt(dbUser data.User, userAPI *UserAPI) {
+	dbUser.LoginAttempts = dbUser.LoginAttempts + 1
+	if dbUser.LoginAttempts >= 3 {
+		dbUser.Locked = true
+	}
+	userAPI.Db.Save(&dbUser)
 }
 
 func mapRegisterUserToDB(user RegisterUser) data.User {
