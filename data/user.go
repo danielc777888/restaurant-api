@@ -1,16 +1,15 @@
 package data
 
 import (
-	"time"
+	"github.com/google/uuid"
 )
 
 type User struct {
-	ID             uint
-	Name           string
-	EmailAddress   string `gorm:"unique"`
-	Password       string
-	Locked         bool
-	LoginAttempts  uint
-	Token          *string
-	TokenCreatedAt *time.Time
+	ID            uuid.UUID `gorm:"type:uuid"`
+	Name          string
+	EmailAddress  string `gorm:"unique"`
+	Password      string
+	Locked        bool
+	LoginAttempts uint
+	Permissions   []Permission
 }

@@ -3,7 +3,6 @@ package api
 import (
 	"errors"
 	"fmt"
-	"log"
 	"middleearth/eateries/data"
 	"net/http"
 	"os"
@@ -12,6 +11,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
@@ -50,21 +50,23 @@ func (authAPI *AuthAPI) Authenticate(c *gin.Context) {
 
 		// Find the user with token Subject
 		var user data.User
-		authAPI.Db.First(&user, claims["sub"])
-
-		if user.ID == 0 {
+		subString, _ := claims["sub"].(string)
+		userId, _ := uuid.Parse(subString)
+		authAPI.Db.First(&user, userId)
+		fmt.Println("##### AUTH User:", user.ID)
+		if user.ID == uuid.Nil {
+			fmt.Println("##### ABORT User:", user.ID)
 			c.AbortWithStatus(http.StatusUnauthorized)
 		}
 
-		if user.Locked == true {
-			log.Println("User account locked:", user.ID)
+		if user.Locked {
+			fmt.Println("User account locked:", user.ID)
 			c.AbortWithStatus(http.StatusUnauthorized)
 		}
 
-		// Attach the request
-		c.Set("user", user)
+		// get permissions from user
+		// if user does not have required permissions throw an error
 
-		//Continue
 		c.Next()
 	} else {
 		c.AbortWithStatus(http.StatusUnauthorized)
@@ -73,12 +75,12 @@ func (authAPI *AuthAPI) Authenticate(c *gin.Context) {
 
 func extractBearerToken(header string) (string, error) {
 	if header == "" {
-		return "", errors.New("bad header value given")
+		return "", errors.New("invalid header")
 	}
 
 	jwtToken := strings.Split(header, " ")
 	if len(jwtToken) != 2 {
-		return "", errors.New("incorrectly formatted authorization header")
+		return "", errors.New("invalid bearer token header")
 	}
 
 	return jwtToken[1], nil

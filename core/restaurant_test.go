@@ -4,12 +4,13 @@ import (
 	"middleearth/eateries/data"
 	"testing"
 
+	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestChangeName(t *testing.T) {
 	restaurant := data.Restaurant{
-		ID:   1,
+		ID:   uuid.New(),
 		Name: "Test",
 	}
 	restaurant2 := ChangeName(restaurant, "New Name")

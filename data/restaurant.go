@@ -1,7 +1,9 @@
 package data
 
+import "github.com/google/uuid"
+
 type Restaurant struct {
-	ID     uint
-	Name   string `gorm:"unique"`
+	ID     uuid.UUID `gorm:"type:uuid"`
+	Name   string    `gorm:"unique"`
 	Dishes []Dish
 }

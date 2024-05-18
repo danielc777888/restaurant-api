@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"log"
 	"middleearth/eateries/api"
 	"middleearth/eateries/cache"
 	"middleearth/eateries/data"
@@ -65,6 +64,6 @@ func main() {
 func loadEnv() {
 	err := godotenv.Load()
 	if err != nil {
-		log.Fatal("Error loading .env file")
+		panic("Error loading .env file")
 	}
 }

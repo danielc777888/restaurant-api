@@ -7,6 +7,7 @@ import (
 	"middleearth/eateries/data"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/redis/go-redis/v9"
 )
 
@@ -19,11 +20,11 @@ func NewDishCache(Redis *redis.Client, Ctx *context.Context) *DishCache {
 	return &DishCache{Redis: Redis, Ctx: Ctx}
 }
 
-func getListDishKey(restaurantID uint) string {
-	return fmt.Sprintf("restaurant_dishes:%d", restaurantID)
+func getListDishKey(restaurantID uuid.UUID) string {
+	return fmt.Sprintf("restaurant_dishes:%s", restaurantID.String())
 }
 
-func (dishCache *DishCache) AddDishes(restaurantID uint, dishes []data.Dish) {
+func (dishCache *DishCache) AddDishes(restaurantID uuid.UUID, dishes []data.Dish) {
 	key := getListDishKey(restaurantID)
 	fmt.Println("SET key to cache:", key)
 	dishesJson, _ := json.Marshal(dishes)
@@ -33,7 +34,7 @@ func (dishCache *DishCache) AddDishes(restaurantID uint, dishes []data.Dish) {
 	}
 }
 
-func (dishCache *DishCache) DeleteDishes(restaurantID uint) {
+func (dishCache *DishCache) DeleteDishes(restaurantID uuid.UUID) {
 	key := getListDishKey(restaurantID)
 	fmt.Println("DEL key from cache:", key)
 	err := dishCache.Redis.Del(*dishCache.Ctx, key).Err()
@@ -42,7 +43,7 @@ func (dishCache *DishCache) DeleteDishes(restaurantID uint) {
 	}
 }
 
-func (dishCache *DishCache) GetDishes(restaurantID uint) ([]data.Dish, error) {
+func (dishCache *DishCache) GetDishes(restaurantID uuid.UUID) ([]data.Dish, error) {
 	var dishes []data.Dish
 	key := getListDishKey(restaurantID)
 	fmt.Println("GET key from cache:", key)

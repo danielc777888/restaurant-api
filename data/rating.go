@@ -1,10 +1,15 @@
 package data
 
-import "database/sql"
+import (
+	"database/sql"
+
+	"github.com/google/uuid"
+)
 
 type Rating struct {
-	ID          uint
-	Description string
-	Sentiment   sql.NullBool
-	DishID      uint `gorm:"index"`
+	ID           uuid.UUID `gorm:"type:uuid"`
+	Description  string
+	Sentiment    sql.NullBool
+	DishID       uuid.UUID `gorm:"index"`
+	RestaurantID uuid.UUID `gorm:"index"`
 }

@@ -1,17 +1,19 @@
 package api
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 
 	"middleearth/eateries/data"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
 type Restaurant struct {
-	ID   uint   `json:"id"`
+	ID   string `json:"id"`
 	Name string `json:"name"`
 }
 
@@ -23,13 +25,19 @@ func NewRestaurantAPI(Db *gorm.DB) *RestaurantAPI {
 	return &RestaurantAPI{Db: Db}
 }
 
-// var restaurants = []Restaurant{
-// 	{ID: "1", Name: "Rest1"},
-// 	{ID: "2", Name: "Rest2"},
-// }
-
-// var dsn = "host=localhost user=dancingponysvc password=password dbname=dancingpony port=5432"
-// var db, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
+func GetRestaurantHeader(c *gin.Context) (uuid.UUID, error) {
+	header := c.Request.Header.Get("RestaurantID")
+	if header == "" {
+		fmt.Println("Invalid restaurant header")
+		return uuid.Nil, errors.New("restaurant header not found")
+	}
+	restaurantID, err := uuid.Parse(header)
+	if err != nil {
+		fmt.Println("Invalid restaurant header")
+		return uuid.Nil, errors.New("invalid restaurant header")
+	}
+	return restaurantID, nil
+}
 
 // @BasePath /api/v1
 
@@ -53,7 +61,7 @@ func mapRestaurantsToJSON(restaurants []data.Restaurant) []Restaurant {
 	result := make([]Restaurant, len(restaurants))
 	for i, restaurant := range restaurants {
 		result[i] = Restaurant{
-			ID:   restaurant.ID,
+			ID:   restaurant.ID.String(),
 			Name: restaurant.Name,
 		}
 	}

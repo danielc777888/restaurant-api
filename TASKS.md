@@ -1,4 +1,4 @@
-# Tasks (11/16)
+# Tasks
 
 ## Task 1
 
@@ -20,26 +20,29 @@
 | Authenticate APIs | **Y** | |
 | Validate APIs | **Y** | |
 | Brute Password Password Check | **Y**| |
+| User Permissions | **TOMMORROW** | | 
+
+// checkout https://www.squash.io/golang-security-jwt-authentication-middleware-and-crypto-packages-in-gin/
 
 ## Task 3
 
 | Task | Done  | Ref |
 | --- | --- | --- |
-| API Performance (Caching) | | |
-| Multi-Tenant (Restaurants) | | |
+| API Performance (Caching) | **Y**| |
+| Multi-Tenant (Restaurants) | **Y** | |
 
 ## Task 4
 
 | Task  | Done  | Ref |
 | --- | --- | --- |
-| Sentiment Analysis (Ratings) | | |
+| Sentiment Analysis (Ratings) | **TOMMORROW** | |
 | API Rate-Limiting | | |
 | OAuth & SSO | | |     
 
 ## Other
 | Task  | Done  | Ref |
 | --- | --- | --- |
-| Tests (Unit, Integration, Property) | | |
-| Observability (Prometheus) | | |
-| Docs (Comments, Swagger) | | |  | 
+| Tests (Unit, Integration, Property) | **TOMMORROW** | |
+| Observability (Prometheus) | **TOMMORROW** | |
+| Docs (Comments, Swagger) | **TOMMORROW** | |  | 
 

@@ -3,7 +3,6 @@ package api
 import (
 	"errors"
 	"fmt"
-	"log"
 	"middleearth/eateries/data"
 	"net/http"
 	"os"
@@ -11,6 +10,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 
 	"golang.org/x/crypto/bcrypt"
@@ -30,7 +30,7 @@ type LoginUser struct {
 
 // response
 type LoggedInUser struct {
-	ID           uint   `json:"id" binding:"required"`
+	ID           string `json:"id" binding:"required"`
 	Name         string `json:"name" binding:"required"`
 	EmailAddress string `json:"emailAddress" binding:"required,email"`
 	Token        string `json:"token" binding:"required"`
@@ -91,8 +91,8 @@ func (userAPI *UserAPI) LoginUser(c *gin.Context) {
 		return
 	}
 
-	if dbUser.Locked == true {
-		log.Println("User account locked: ", dbUser.ID)
+	if dbUser.Locked {
+		fmt.Println("User account locked: ", dbUser.ID)
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "User account locked, please contact support",
 		})
@@ -111,7 +111,7 @@ func (userAPI *UserAPI) LoginUser(c *gin.Context) {
 
 	// generate a jwt token
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"sub": dbUser.ID,
+		"sub": dbUser.ID.String(),
 		"exp": time.Now().Add(time.Hour * 24 * 30).Unix(),
 	})
 
@@ -138,6 +138,7 @@ func loginAttempt(dbUser data.User, userAPI *UserAPI) {
 
 func mapRegisterUserToDB(user RegisterUser) data.User {
 	return data.User{
+		ID:           uuid.New(),
 		Name:         user.Name,
 		EmailAddress: user.EmailAddress,
 		Password:     user.Password,
@@ -146,7 +147,7 @@ func mapRegisterUserToDB(user RegisterUser) data.User {
 
 func mapUserToJSON(user data.User, token string) LoggedInUser {
 	return LoggedInUser{
-		ID:           user.ID,
+		ID:           user.ID.String(),
 		Name:         user.Name,
 		EmailAddress: user.EmailAddress,
 		Token:        token,
