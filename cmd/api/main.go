@@ -1,14 +1,18 @@
 package main
 
 import (
+	"context"
 	"log"
 	"middleearth/eateries/api"
+	"middleearth/eateries/cache"
 	"middleearth/eateries/data"
+	"os"
+
+	docs "middleearth/eateries/docs"
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
-
-	docs "middleearth/eateries/docs"
+	"github.com/redis/go-redis/v9"
 
 	swaggerfiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
@@ -17,8 +21,20 @@ import (
 func ginRun() {
 	r := gin.Default()
 	db := data.Connection()
+
+	redisAddress := os.Getenv("REDIS_ADDRESS")
+	var ctx = context.Background()
+	rdb := redis.NewClient(&redis.Options{
+		Addr:     redisAddress,
+		Password: "", // no password set
+		DB:       0,  // use default DB
+	})
+
+	// rdb.FlushAll(ctx).Result()
+	dishCache := cache.NewDishCache(rdb, &ctx)
+
 	restaurantAPI := api.NewRestaurantAPI(db)
-	dishAPI := api.NewDishAPI(db)
+	dishAPI := api.NewDishAPI(db, dishCache)
 	ratingAPI := api.NewRatingAPI(db)
 	userAPI := api.NewUserAPI(db)
 	authAPI := api.NewAuthAPI(db)

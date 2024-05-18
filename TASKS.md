@@ -1,4 +1,4 @@
-# Tasks (6/16)
+# Tasks (11/16)
 
 ## Task 1
 
@@ -17,9 +17,9 @@
 | --- | --- | --- |
 | Register User | **Y** | |
 | Login User | **Y** | |
-| Authenticate API | **Y** | |
-| Validate API | **Y** | |
-| Brute Password Password Check | | |
+| Authenticate APIs | **Y** | |
+| Validate APIs | **Y** | |
+| Brute Password Password Check | **Y**| |
 
 ## Task 3
 
@@ -32,7 +32,7 @@
 
 | Task  | Done  | Ref |
 | --- | --- | --- |
-| Sentiment Analysis (Reviews) | | |
+| Sentiment Analysis (Ratings) | | |
 | API Rate-Limiting | | |
 | OAuth & SSO | | |     
 

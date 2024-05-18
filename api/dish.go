@@ -3,8 +3,9 @@ package api
 import (
 	"errors"
 	"fmt"
-	"log"
+	"middleearth/eateries/cache"
 	"middleearth/eateries/data"
+	"middleearth/eateries/env"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -27,11 +28,12 @@ type UpdateDish struct {
 }
 
 type DishAPI struct {
-	Db *gorm.DB
+	Db    *gorm.DB
+	Cache *cache.DishCache
 }
 
-func NewDishAPI(Db *gorm.DB) *DishAPI {
-	return &DishAPI{Db: Db}
+func NewDishAPI(Db *gorm.DB, Cache *cache.DishCache) *DishAPI {
+	return &DishAPI{Db: Db, Cache: Cache}
 }
 
 // @BasePath /api/v1
@@ -39,7 +41,7 @@ func NewDishAPI(Db *gorm.DB) *DishAPI {
 func (dishApi *DishAPI) CreateDish(c *gin.Context) {
 	var newDish Dish
 	if err := c.BindJSON(&newDish); err != nil {
-		log.Println("Validation error: ", err)
+		fmt.Println("Validation error: ", err)
 		c.AbortWithStatusJSON(http.StatusBadRequest,
 			gin.H{
 				"error":   "VALIDATION ERROR",
@@ -48,7 +50,10 @@ func (dishApi *DishAPI) CreateDish(c *gin.Context) {
 	}
 	dbDish := mapDishToDB(newDish)
 	result := dishApi.Db.Create(&dbDish)
-	fmt.Printf("DB result error %s, rows %d", result.Error, result.RowsAffected)
+	fmt.Println("DB result error:", result.Error)
+	if env.CacheEnabled() {
+		dishApi.Cache.DeleteDishes(1)
+	}
 	c.IndentedJSON(http.StatusOK, newDish)
 }
 
@@ -61,6 +66,9 @@ func (dishApi *DishAPI) UpdateDish(c *gin.Context) {
 	dbDish := mapUpdateDishToDB(dish)
 	result := dishApi.Db.Save(&dbDish)
 	fmt.Printf("DB result error %s, rows %d", result.Error, result.RowsAffected)
+	if env.CacheEnabled() {
+		dishApi.Cache.DeleteDishes(1)
+	}
 	c.IndentedJSON(http.StatusOK, dbDish)
 }
 
@@ -73,6 +81,9 @@ func (dishApi *DishAPI) DeleteDish(c *gin.Context) {
 		return
 	}
 	dishApi.Db.Delete(&dish)
+	if env.CacheEnabled() {
+		dishApi.Cache.DeleteDishes(1)
+	}
 	c.IndentedJSON(http.StatusOK, id)
 }
 
@@ -89,6 +100,16 @@ func (dishApi *DishAPI) GetDish(c *gin.Context) {
 
 func (dishApi *DishAPI) ListDish(c *gin.Context) {
 	var dishes []data.Dish
+	if env.CacheEnabled() {
+		dishes, err := dishApi.Cache.GetDishes(1)
+		if dishes == nil {
+			fmt.Println("Getting dishes from DATABASE:", err)
+			dishApi.Db.Find(&dishes)
+			dishApi.Cache.AddDishes(1, dishes)
+		}
+		c.IndentedJSON(http.StatusOK, mapDishesToJSON(dishes))
+		return
+	}
 	dishApi.Db.Find(&dishes)
 	c.IndentedJSON(http.StatusOK, mapDishesToJSON(dishes))
 }
