@@ -109,56 +109,8 @@ func (userAPI *UserAPI) LoginUser(c *gin.Context) {
 		return
 	}
 
-	// dbUser.Token = &token
-	// now := time.Now()
-	// dbUser.TokenCreatedAt = &now
-	// // save token in db
-	// result := userAPI.Db.Save(&dbUser)
-
-	//fmt.Printf("DB result error %s, rows %d", result.Error, result.RowsAffected)
 	c.IndentedJSON(http.StatusOK, mapUserToJSON(dbUser, signedToken))
 }
-
-// func (dishApi *DishAPI) UpdateDish(c *gin.Context) {
-// 	var dish UpdateDish
-// 	if err := c.BindJSON(&dish); err != nil {
-// 		fmt.Printf("Bind error %s", err)
-// 		return
-// 	}
-// 	dbDish := mapUpdateDishToDB(dish)
-// 	result := dishApi.Db.Save(&dbDish)
-// 	fmt.Printf("DB result error %s, rows %d", result.Error, result.RowsAffected)
-// 	c.IndentedJSON(http.StatusOK, dbDish)
-// }
-
-// func (dishApi *DishAPI) DeleteDish(c *gin.Context) {
-// 	id := c.Param("id")
-// 	var dish data.Dish
-// 	result := dishApi.Db.First(&dish, id)
-// 	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-// 		c.IndentedJSON(http.StatusNotFound, gin.H{"message": "Dish not found"})
-// 		return
-// 	}
-// 	dishApi.Db.Delete(&dish)
-// 	c.IndentedJSON(http.StatusOK, id)
-// }
-
-// func (dishApi *DishAPI) GetDish(c *gin.Context) {
-// 	id := c.Param("id")
-// 	var dish data.Dish
-// 	result := dishApi.Db.First(&dish, id)
-// 	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-// 		c.IndentedJSON(http.StatusNotFound, gin.H{"message": "Dish not found"})
-// 		return
-// 	}
-// 	c.IndentedJSON(http.StatusOK, dish)
-// }
-
-// func (dishApi *DishAPI) ListDish(c *gin.Context) {
-// 	var dishes []data.Dish
-// 	dishApi.Db.Find(&dishes)
-// 	c.IndentedJSON(http.StatusOK, mapDishesToJSON(dishes))
-// }
 
 func mapRegisterUserToDB(user RegisterUser) data.User {
 	return data.User{
@@ -176,30 +128,3 @@ func mapUserToJSON(user data.User, token string) LoggedInUser {
 		Token:        token,
 	}
 }
-
-// func mapUpdateDishToDB(dish UpdateDish) data.Dish {
-// 	return data.Dish{
-// 		ID:           dish.ID,
-// 		Name:         dish.Name,
-// 		Description:  dish.Description,
-// 		Price:        dish.Price,
-// 		RestaurantID: dish.RestaurantID,
-// 	}
-// }
-
-// func mapDishesToJSON(dishes []data.Dish) []Dish {
-// 	var result []Dish
-// 	for _, dish := range dishes {
-// 		result = append(result, mapDishToJSON(dish))
-// 	}
-// 	return result
-// }
-
-// func mapDishToJSON(dish data.Dish) Dish {
-// 	return Dish{
-// 		Name:         dish.Name,
-// 		Description:  dish.Description,
-// 		Price:        dish.Price,
-// 		RestaurantID: dish.RestaurantID,
-// 	}
-// }

@@ -3,7 +3,6 @@ package api
 import (
 	"errors"
 	"fmt"
-	"log"
 	"middleearth/eateries/data"
 	"net/http"
 	"os"
@@ -31,13 +30,7 @@ func (authAPI *AuthAPI) Authenticate(c *gin.Context) {
 		return
 	}
 
-	log.Printf("Auth HEADER %s \n", signedToken)
-
-	// if err != nil {
-	// 	c.AbortWithStatus(http.StatusUnauthorized)
-	// }
-
-	// Decode/validate it
+	// Validate signed token
 	token, _ := jwt.Parse(signedToken, func(token *jwt.Token) (interface{}, error) {
 		// Don't forget to validate the alg is what you expect:
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
@@ -49,7 +42,7 @@ func (authAPI *AuthAPI) Authenticate(c *gin.Context) {
 	})
 
 	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-		// Chec k the expiry date
+		// Check the expiry date
 		if float64(time.Now().Unix()) > claims["exp"].(float64) {
 			c.AbortWithStatus(http.StatusUnauthorized)
 		}
