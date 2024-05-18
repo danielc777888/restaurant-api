@@ -71,7 +71,10 @@
 - swag init -g api/restaurant.go
 
 ### readings
-- addresses/pointers/value/copy
+- addresses/pointers/value/copy in go
+- system design googl cloud designs
 
 ### References
+- https://go.dev/
+- https://cacm.acm.org/research/the-go-programming-language-and-environment/
 - https://github.com/lemoncode21/golang-crud-gin-gorm

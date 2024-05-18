@@ -34,4 +34,12 @@
 | --- | --- | --- |
 | Sentiment Analysis (Reviews) | | |
 | API Rate-Limiting | | |
-| OAuth & SSO | | |                          
+| OAuth & SSO | | |     
+
+## Other
+| Task  | Done  | Ref |
+| --- | --- | --- |
+| Tests (Unit, Integration, Property) | | |
+| Observability (Prometheus) | | |
+| Docs (Comments, Swagger) | | |  | 
+

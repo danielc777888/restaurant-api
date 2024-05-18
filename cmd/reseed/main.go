@@ -20,10 +20,12 @@ func main() {
 	db.Migrator().DropTable(&data.Rating{})
 	db.Migrator().DropTable(&data.Dish{})
 	db.Migrator().DropTable(&data.Restaurant{})
+	db.Migrator().DropTable(&data.User{})
 
 	db.Migrator().CreateTable(&data.Restaurant{})
 	db.Migrator().CreateTable(&data.Dish{})
 	db.Migrator().CreateTable(&data.Rating{})
+	db.Migrator().CreateTable(&data.User{})
 
 	fmt.Println("Seeding Restaurant data...")
 	db.Create(&data.Restaurant{
@@ -48,5 +50,13 @@ func main() {
 				}},
 			{Name: "Sourdough", Description: "Elvin sourdough bread", Price: 40},
 		}})
+
+	db.Create(&data.User{
+		Name:          "Keely",
+		EmailAddress:  "keely@erebor.com",
+		Password:      "password",
+		Locked:        false,
+		LoginAttempts: 0,
+	})
 
 }

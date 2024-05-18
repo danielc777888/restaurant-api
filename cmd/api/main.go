@@ -18,6 +18,7 @@ func ginRun() {
 	restaurantAPI := api.NewRestaurantAPI(db)
 	dishAPI := api.NewDishAPI(db)
 	ratingAPI := api.NewRatingAPI(db)
+	userAPI := api.NewUserAPI(db)
 	docs.SwaggerInfo.BasePath = "/api/v1"
 	v1 := r.Group("/api/v1")
 	{
@@ -30,6 +31,9 @@ func ginRun() {
 		v1.DELETE("/dishes/:id", dishAPI.DeleteDish)
 
 		v1.POST("/ratings", ratingAPI.CreateRating)
+
+		v1.POST("/users/register", userAPI.RegisterUser)
+		v1.PATCH("/users/login", userAPI.LoginUser)
 	}
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 	r.Run() // listen and serve on 0.0.0.0:8080

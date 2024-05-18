@@ -45,6 +45,25 @@ curl http://localhost:8080/api/v1/ratings \
     --data '{"description": "Great service", "dishID": 1}'
 ```
 
+## Register User
+```
+curl http://localhost:8080/api/v1/users/register \
+    --include \
+    --header "Content-Type: application/json" \
+    --request "POST" \
+    --data '{"name": "Gimli","emailAddress": "gimli@erabo.com","password": "superpassword"}'
+```
+
+## Login User
+```
+curl http://localhost:8080/api/v1/users/login \
+    --include \
+    --header "Content-Type: application/json" \
+    --request "PATCH" \
+    --data '{"emailAddress": "gimli@erabo.com","password": "superpassword"}'
+```
+
+
 ## List Restaurants
 ```
 curl http://localhost:8080/api/v1/restaurants
