@@ -3,6 +3,7 @@ package api
 import (
 	"errors"
 	"fmt"
+	"log"
 	"middleearth/eateries/data"
 	"net/http"
 
@@ -11,18 +12,18 @@ import (
 )
 
 type Dish struct {
-	Name         string `json:"name"`
-	Description  string `json:"description"`
-	Price        uint   `json:"price"`
-	RestaurantID uint   `json:"restaurantID"`
+	Name         string `json:"name" binding:"required,min=3,max=20"`
+	Description  string `json:"description" binding:"required,min=3,max=200"`
+	Price        uint   `json:"price" binding:"required"`
+	RestaurantID uint   `json:"restaurantID" binding:"required"`
 }
 
 type UpdateDish struct {
-	ID           uint   `json:"id"`
-	Name         string `json:"name"`
-	Description  string `json:"description"`
-	Price        uint   `json:"price"`
-	RestaurantID uint   `json:"restaurantID"`
+	ID           uint   `json:"id" binding:"required,min=3,max=20"`
+	Name         string `json:"name" binding:"required,min=3,max=200"`
+	Description  string `json:"description" binding:"required"`
+	Price        uint   `json:"price" binding:"required"`
+	RestaurantID uint   `json:"restaurantID" binding:"required"`
 }
 
 type DishAPI struct {
@@ -38,6 +39,11 @@ func NewDishAPI(Db *gorm.DB) *DishAPI {
 func (dishApi *DishAPI) CreateDish(c *gin.Context) {
 	var newDish Dish
 	if err := c.BindJSON(&newDish); err != nil {
+		log.Println("Validation error: ", err)
+		c.AbortWithStatusJSON(http.StatusBadRequest,
+			gin.H{
+				"error":   "VALIDATION ERROR",
+				"message": "Invalid inputs. Please check your inputs"})
 		return
 	}
 	dbDish := mapDishToDB(newDish)

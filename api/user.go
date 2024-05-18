@@ -16,22 +16,22 @@ import (
 
 // requests
 type RegisterUser struct {
-	Name         string `json:"name"`
-	EmailAddress string `json:"emailAddress"`
-	Password     string `json:"password"`
+	Name         string `json:"name" binding:"required"`
+	EmailAddress string `json:"emailAddress" binding:"required,email"`
+	Password     string `json:"password" binding:"required"`
 }
 
 type LoginUser struct {
-	EmailAddress string `json:"emailAddress"`
-	Password     string `json:"password"`
+	EmailAddress string `json:"emailAddress" binding:"required,email"`
+	Password     string `json:"password" binding:"required"`
 }
 
 // response
 type LoggedInUser struct {
-	ID           uint   `json:"id"`
-	Name         string `json:"name"`
-	EmailAddress string `json:"emailAddress"`
-	Token        string `json:"token"`
+	ID           uint   `json:"id" binding:"required"`
+	Name         string `json:"name" binding:"required"`
+	EmailAddress string `json:"emailAddress" binding:"required,email"`
+	Token        string `json:"token" binding:"required"`
 }
 
 type UserAPI struct {

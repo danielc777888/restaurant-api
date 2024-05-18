@@ -15,10 +15,10 @@
 
 | Task | Done | Ref |
 | --- | --- | --- |
-| Register User | | |
-| Login User | | |
-| Authenticate API | | |
-| Validate API | | |
+| Register User | **Y** | |
+| Login User | **Y** | |
+| Authenticate API | **Y** | |
+| Validate API | **Y** | |
 | Brute Password Password Check | | |
 
 ## Task 3

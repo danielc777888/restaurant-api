@@ -81,3 +81,4 @@
 - https://gin-gonic.com/docs/
 - https://gorm.io/
 - https://cacm.acm.org/research/the-go-programming-language-and-environment/
+- https://blog.logrocket.com/gin-binding-in-go-a-tutorial-with-examples/
