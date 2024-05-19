@@ -55,12 +55,12 @@ func (api *RestaurantAPI) ListRestaurants(ginContext *gin.Context) {
 	}
 
 	// map to response
-	result := make([]restaurantResponse, len(restaurants))
+	response := make([]restaurantResponse, len(restaurants))
 	for i, restaurant := range restaurants {
-		result[i] = restaurantResponse{
+		response[i] = restaurantResponse{
 			ID:   restaurant.ID.String(),
 			Name: restaurant.Name,
 		}
 	}
-	ginContext.IndentedJSON(http.StatusOK, result)
+	ginContext.IndentedJSON(http.StatusOK, response)
 }

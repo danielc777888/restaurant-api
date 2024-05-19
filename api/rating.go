@@ -72,12 +72,12 @@ func (api *RatingAPI) CreateRating(ginContext *gin.Context) {
 	if createdRating.Sentiment != nil {
 		sentiment = *createdRating.Sentiment
 	}
-	result := ratingResponse{
+	response := ratingResponse{
 		ID:           createdRating.ID.String(),
 		Description:  createdRating.Description,
 		DishID:       createdRating.DishID.String(),
 		RestaurantID: createdRating.RestaurantID.String(),
 		Sentiment:    sentiment,
 	}
-	ginContext.IndentedJSON(http.StatusOK, result)
+	ginContext.IndentedJSON(http.StatusOK, response)
 }

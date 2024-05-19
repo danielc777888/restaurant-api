@@ -1,35 +1,31 @@
 package api
 
 import (
-	"errors"
-	"fmt"
-	"middleearth/eateries/data"
-	"middleearth/eateries/env"
+	"middleearth/eateries/service"
 	"net/http"
-	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/golang-jwt/jwt/v5"
-	"github.com/google/uuid"
-	"gorm.io/gorm"
-
-	"golang.org/x/crypto/bcrypt"
 )
 
 // requests
-type RegisterUser struct {
+type registerUserRequest struct {
 	Name         string `json:"name" binding:"required"`
 	EmailAddress string `json:"emailAddress" binding:"required,email"`
 	Password     string `json:"password" binding:"required"`
 }
 
-type LoginUser struct {
+type loginUserRequest struct {
 	EmailAddress string `json:"emailAddress" binding:"required,email"`
 	Password     string `json:"password" binding:"required"`
 }
 
-// response
-type LoggedInUser struct {
+type userResponse struct {
+	ID           string `json:"id" binding:"required"`
+	Name         string `json:"name" binding:"required"`
+	EmailAddress string `json:"emailAddress" binding:"required,email"`
+}
+
+type loggedInUserResponse struct {
 	ID           string `json:"id" binding:"required"`
 	Name         string `json:"name" binding:"required"`
 	EmailAddress string `json:"emailAddress" binding:"required,email"`
@@ -37,117 +33,86 @@ type LoggedInUser struct {
 }
 
 type UserAPI struct {
-	Db *gorm.DB
+	Service *service.UserService
 }
 
-func NewUserAPI(Db *gorm.DB) *UserAPI {
-	return &UserAPI{Db: Db}
+func NewUserAPI(Service *service.UserService) *UserAPI {
+	return &UserAPI{Service: Service}
 }
 
-func (userAPI *UserAPI) RegisterUser(c *gin.Context) {
-	var user RegisterUser
-	if err := c.BindJSON(&user); err != nil {
+// RegisterUser godoc
+// @Summary      Register a user
+// @Description  register a user
+// @Tags         users
+// @Accept       json
+// @Produce      json
+// @Param		 register body    api.registerUserRequest   true  "Register user"
+// @Success      200  {array}   api.userResponse
+// @Router       /users/register [post]
+func (userAPI *UserAPI) RegisterUser(ginContext *gin.Context) {
+	var request registerUserRequest
+	if err := ginContext.BindJSON(&request); err != nil {
+		ErrorResponse(err, ginContext)
 		return
 	}
 
-	// validate
-	// email address, password
-	// unique: email address
+	// map to user action
+	action := service.RegisterUserAction{
+		Name:         request.Name,
+		EmailAddress: request.EmailAddress,
+		Password:     request.Password,
+	}
 
-	// hash password
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), 10)
-
+	user, err := userAPI.Service.RegisterUser(action)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "Failed to hash password.",
-		})
+		ErrorResponse(err, ginContext)
 		return
 	}
 
-	dbUser := mapRegisterUserToDB(user)
-	dbUser.Password = string(hashedPassword)
-
-	result := userAPI.Db.Create(&dbUser)
-	fmt.Printf("DB result error %s, rows %d", result.Error, result.RowsAffected)
-	c.IndentedJSON(http.StatusOK, dbUser.ID)
-}
-
-func (userAPI *UserAPI) LoginUser(c *gin.Context) {
-	var user LoginUser
-	if err := c.BindJSON(&user); err != nil {
-		return
-	}
-	var dbUser data.User
-	// hash password
-
-	// find in db
-	result := userAPI.Db.Where("email_address = ?", user.EmailAddress).First(&dbUser)
-	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "Invalid email or password",
-		})
-		return
-	}
-
-	if dbUser.Locked {
-		fmt.Println("User account locked: ", dbUser.ID)
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "User account locked, please contact support",
-		})
-		return
-	}
-
-	err := bcrypt.CompareHashAndPassword([]byte(dbUser.Password), []byte(user.Password))
-
-	if err != nil {
-		loginAttempt(dbUser, userAPI)
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "Invalid email or password",
-		})
-		return
-	}
-
-	// generate a jwt token
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"sub": dbUser.ID.String(),
-		"exp": time.Now().Add(time.Hour * 24 * 30).Unix(),
-	})
-
-	// Sign and get the complete encoded token as a string using the secret
-	jwtSecret := env.JWTSecret()
-	signedToken, err := token.SignedString([]byte(jwtSecret))
-	if err != nil {
-		loginAttempt(dbUser, userAPI)
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "Failed to create token",
-		})
-		return
-	}
-	c.IndentedJSON(http.StatusOK, mapUserToJSON(dbUser, signedToken))
-}
-
-func loginAttempt(dbUser data.User, userAPI *UserAPI) {
-	dbUser.LoginAttempts = dbUser.LoginAttempts + 1
-	if dbUser.LoginAttempts >= 3 {
-		dbUser.Locked = true
-	}
-	userAPI.Db.Save(&dbUser)
-}
-
-func mapRegisterUserToDB(user RegisterUser) data.User {
-	return data.User{
-		ID:           uuid.New(),
-		Name:         user.Name,
-		EmailAddress: user.EmailAddress,
-		Password:     user.Password,
-	}
-}
-
-func mapUserToJSON(user data.User, token string) LoggedInUser {
-	return LoggedInUser{
+	// map to user response
+	response := userResponse{
 		ID:           user.ID.String(),
 		Name:         user.Name,
 		EmailAddress: user.EmailAddress,
-		Token:        token,
 	}
+
+	ginContext.IndentedJSON(http.StatusOK, response)
+}
+
+// RegisterUser godoc
+// @Summary      Login user
+// @Description  Login user
+// @Tags         users
+// @Accept       json
+// @Produce      json
+// @Param		 register body    api.loginUserRequest   true  "Login user"
+// @Success      200  {array}   api.loggedInUserResponse
+// @Router       /users/login [post]
+func (userAPI *UserAPI) LoginUser(ginContext *gin.Context) {
+	var request loginUserRequest
+	if err := ginContext.BindJSON(&request); err != nil {
+		return
+	}
+
+	// map to login user action
+	action := service.LoginUserAction{
+		EmailAddress: request.EmailAddress,
+		Password:     request.Password,
+	}
+
+	loggedInUser, err := userAPI.Service.LoginUser(action)
+	if err != nil {
+		ErrorResponse(err, ginContext)
+		return
+	}
+
+	// map to login user response
+	response := loggedInUserResponse{
+		ID:           loggedInUser.ID.String(),
+		Name:         loggedInUser.Name,
+		EmailAddress: loggedInUser.EmailAddress,
+		Token:        loggedInUser.Token,
+	}
+
+	ginContext.IndentedJSON(http.StatusOK, response)
 }

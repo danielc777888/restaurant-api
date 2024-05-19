@@ -11,6 +11,32 @@ definitions:
     - description
     - dishID
     type: object
+  api.loggedInUserResponse:
+    properties:
+      emailAddress:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      token:
+        type: string
+    required:
+    - emailAddress
+    - id
+    - name
+    - token
+    type: object
+  api.loginUserRequest:
+    properties:
+      emailAddress:
+        type: string
+      password:
+        type: string
+    required:
+    - emailAddress
+    - password
+    type: object
   api.ratingResponse:
     properties:
       description:
@@ -24,12 +50,38 @@ definitions:
       sentiment:
         type: string
     type: object
+  api.registerUserRequest:
+    properties:
+      emailAddress:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+    required:
+    - emailAddress
+    - name
+    - password
+    type: object
   api.restaurantResponse:
     properties:
       id:
         type: string
       name:
         type: string
+    type: object
+  api.userResponse:
+    properties:
+      emailAddress:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+    required:
+    - emailAddress
+    - id
+    - name
     type: object
 info:
   contact: {}
@@ -85,4 +137,52 @@ paths:
       summary: List restaurants
       tags:
       - restaurants
+  /users/login:
+    post:
+      consumes:
+      - application/json
+      description: Login user
+      parameters:
+      - description: Login user
+        in: body
+        name: register
+        required: true
+        schema:
+          $ref: '#/definitions/api.loginUserRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/api.loggedInUserResponse'
+            type: array
+      summary: Login user
+      tags:
+      - users
+  /users/register:
+    post:
+      consumes:
+      - application/json
+      description: register a user
+      parameters:
+      - description: Register user
+        in: body
+        name: register
+        required: true
+        schema:
+          $ref: '#/definitions/api.registerUserRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/api.userResponse'
+            type: array
+      summary: Register a user
+      tags:
+      - users
 swagger: "2.0"

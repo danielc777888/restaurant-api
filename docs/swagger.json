@@ -80,6 +80,80 @@
                     }
                 }
             }
+        },
+        "/users/login": {
+            "post": {
+                "description": "Login user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Login user",
+                "parameters": [
+                    {
+                        "description": "Login user",
+                        "name": "register",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/api.loginUserRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/api.loggedInUserResponse"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/users/register": {
+            "post": {
+                "description": "register a user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Register a user",
+                "parameters": [
+                    {
+                        "description": "Register user",
+                        "name": "register",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/api.registerUserRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/api.userResponse"
+                            }
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -96,6 +170,44 @@
                     "minLength": 3
                 },
                 "dishID": {
+                    "type": "string"
+                }
+            }
+        },
+        "api.loggedInUserResponse": {
+            "type": "object",
+            "required": [
+                "emailAddress",
+                "id",
+                "name",
+                "token"
+            ],
+            "properties": {
+                "emailAddress": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "token": {
+                    "type": "string"
+                }
+            }
+        },
+        "api.loginUserRequest": {
+            "type": "object",
+            "required": [
+                "emailAddress",
+                "password"
+            ],
+            "properties": {
+                "emailAddress": {
+                    "type": "string"
+                },
+                "password": {
                     "type": "string"
                 }
             }
@@ -120,9 +232,47 @@
                 }
             }
         },
+        "api.registerUserRequest": {
+            "type": "object",
+            "required": [
+                "emailAddress",
+                "name",
+                "password"
+            ],
+            "properties": {
+                "emailAddress": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                }
+            }
+        },
         "api.restaurantResponse": {
             "type": "object",
             "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "api.userResponse": {
+            "type": "object",
+            "required": [
+                "emailAddress",
+                "id",
+                "name"
+            ],
+            "properties": {
+                "emailAddress": {
+                    "type": "string"
+                },
                 "id": {
                     "type": "string"
                 },

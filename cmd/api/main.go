@@ -56,7 +56,9 @@ func ginRun() {
 	ratingAPI := api.NewRatingAPI(ratingService)
 
 	// init user
-	userAPI := api.NewUserAPI(db)
+	userData := data.NewUserData(db)
+	userService := service.NewUserService(userData)
+	userAPI := api.NewUserAPI(userService)
 	authAPI := api.NewAuthAPI(db)
 
 	// TODO: Add auth, perhaps org middle ware, try different groupongs

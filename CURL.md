@@ -90,12 +90,3 @@ curl http://localhost:8080/api/v1/users/login \
 ```
 curl http://localhost:8080/api/v1/restaurants
 ```
-
-### Gemini PRO
-```
-curl 'https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key=AIzaSyABKNVcyrO5EqwckFP7TZB4OcNNaTmykek' \
-    --include \
-    --header 'Content-Type: application/json' \
-    --request "POST" \
-    --data '{ "contents" : [ { "parts": [ {"text": "Write a story about a magic backpack"} ] } ] }'
-```

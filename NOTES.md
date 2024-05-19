@@ -14,35 +14,14 @@
 - Copy **.env_sample** to **.env** and set any private values.
 - Reseed database: `go run reseed/main.go`
 - Start api server: `go run api/main.go`
-- Run all tests: `go test ./...`
-- Browse here to read the api docs: `http://localhost:8080/swagger/index.html`
+- Browse here to read the api docs and try it out: `http://localhost:8080/swagger/index.html`
+- Browse here to view prometheus metrics: `http://localhost:8080/metrics`
+- To see some curl examples see **CURL.md**
 
-## TODO if enough time
-
-### api perf
-- db connection pool
-- redis caching, daily eviction for restaurants + dishes
-- hourly for ratings
-- benchmark before and after
-
-### prometheus for observability
-
-
-### database
-- add timestamps
-- use db pool
-- use transactions
-
-## Tests
-- property based tests with rapid
-
-## Metrics
-- run: `curl -v --silent http://localhost:8080/metrics 2>&1 | grep GET_/api/v1/restaurants`
-
-### Swagger Docs
+## Swagger Docs
 - To generate swagger docs run: `swag init -g api/*.go`
 
-### References
+## References
 - https://go.dev/
 - https://github.com/lemoncode21/golang-crud-gin-gorm
 - https://medium.com/readytowork-org/secure-your-go-web-application-jwt-authentication-e65a5af7c049
