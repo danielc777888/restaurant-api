@@ -17,7 +17,7 @@ const docTemplate = `{
     "paths": {
         "/restaurants": {
             "get": {
-                "description": "get restaurants",
+                "description": "list restaurants",
                 "consumes": [
                     "application/json"
                 ],
@@ -25,16 +25,32 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "example"
+                    "restaurants"
                 ],
-                "summary": "Gets a list of restaurants",
+                "summary": "List restaurants",
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "Restaurant"
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/api.restaurantResponse"
+                            }
                         }
                     }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "api.restaurantResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
                 }
             }
         }
@@ -45,7 +61,7 @@ const docTemplate = `{
 var SwaggerInfo = &swag.Spec{
 	Version:          "",
 	Host:             "",
-	BasePath:         "/api/v1",
+	BasePath:         "",
 	Schemes:          []string{},
 	Title:            "",
 	Description:      "",

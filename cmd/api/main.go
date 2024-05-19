@@ -5,6 +5,7 @@ import (
 	"middleearth/eateries/api"
 	"middleearth/eateries/cache"
 	"middleearth/eateries/data"
+	"middleearth/eateries/service"
 	"os"
 
 	docs "middleearth/eateries/docs"
@@ -22,12 +23,14 @@ import (
 func ginRun() {
 	r := gin.Default()
 
-	// add prometheus instrumenting middleware
+	// init prometheus instrumenting middleware
 	p := gpmiddleware.NewPrometheus("gin")
 	p.Use(r)
 
+	// init database
 	db := data.Connection()
 
+	// init redis
 	redisAddress := os.Getenv("REDIS_ADDRESS")
 	var ctx = context.Background()
 	rdb := redis.NewClient(&redis.Options{
@@ -37,17 +40,29 @@ func ginRun() {
 	})
 
 	// rdb.FlushAll(ctx).Result()
-	dishCache := cache.NewDishCache(rdb, &ctx)
 
-	restaurantAPI := api.NewRestaurantAPI(db)
+	// init restaurant
+	restaurantData := data.NewRestaurantData(db)
+	restaurantService := service.NewRestaurantService(restaurantData)
+	restaurantAPI := api.NewRestaurantAPI(restaurantService)
+
+	// init dish
+	dishCache := cache.NewDishCache(rdb, &ctx)
 	dishAPI := api.NewDishAPI(db, dishCache)
+
+	// init rating
 	ratingAPI := api.NewRatingAPI(db)
+
+	// init user
 	userAPI := api.NewUserAPI(db)
 	authAPI := api.NewAuthAPI(db)
+
+	// TODO: Add auth, perhaps org middle ware, try different groupongs
+	// init routes
 	docs.SwaggerInfo.BasePath = "/api/v1"
 	v1 := r.Group("/api/v1")
 	{
-		v1.GET("/restaurants", restaurantAPI.GetRestaurants)
+		v1.GET("/restaurants", restaurantAPI.ListRestaurants)
 
 		v1.GET("/dishes/:id", dishAPI.GetDish)
 		v1.GET("/dishes", dishAPI.ListDish)
@@ -63,6 +78,10 @@ func ginRun() {
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 	r.Run() // listen and serve on 0.0.0.0:8080
 }
+
+// @host      localhost:8080
+// @BasePath  /api/v1
+
 func main() {
 	loadEnv()
 	ginRun()

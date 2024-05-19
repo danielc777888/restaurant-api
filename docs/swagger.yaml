@@ -1,4 +1,11 @@
-basePath: /api/v1
+definitions:
+  api.restaurantResponse:
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+    type: object
 info:
   contact: {}
 paths:
@@ -6,15 +13,17 @@ paths:
     get:
       consumes:
       - application/json
-      description: get restaurants
+      description: list restaurants
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            type: Restaurant
-      summary: Gets a list of restaurants
+            items:
+              $ref: '#/definitions/api.restaurantResponse'
+            type: array
+      summary: List restaurants
       tags:
-      - example
+      - restaurants
 swagger: "2.0"

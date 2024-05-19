@@ -5,26 +5,26 @@ import (
 	"fmt"
 	"net/http"
 
-	"middleearth/eateries/data"
+	"middleearth/eateries/service"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
-	"gorm.io/gorm"
 )
 
-type Restaurant struct {
+type restaurantResponse struct {
 	ID   string `json:"id"`
 	Name string `json:"name"`
 }
 
 type RestaurantAPI struct {
-	Db *gorm.DB
+	Service *service.RestaurantService
 }
 
-func NewRestaurantAPI(Db *gorm.DB) *RestaurantAPI {
-	return &RestaurantAPI{Db: Db}
+func NewRestaurantAPI(Service *service.RestaurantService) *RestaurantAPI {
+	return &RestaurantAPI{Service: Service}
 }
 
+// Get RestaurantID from gin context request header
 func GetRestaurantHeader(c *gin.Context) (uuid.UUID, error) {
 	header := c.Request.Header.Get("RestaurantID")
 	if header == "" {
@@ -39,28 +39,28 @@ func GetRestaurantHeader(c *gin.Context) (uuid.UUID, error) {
 	return restaurantID, nil
 }
 
-// @BasePath /api/v1
-
-// GetRestaurants godoc
-// @Summary Gets a list of restaurants
-// @Schemes
-// @Description get restaurants
-// @Tags example
-// @Accept json
-// @Produce json
-// @Success 200 {Restaurant} []Restaurant
-// @Router /restaurants [get]
-func (r *RestaurantAPI) GetRestaurants(c *gin.Context) {
-	fmt.Println("Getting restaurants")
-	var restaurants []data.Restaurant
-	r.Db.Find(&restaurants)
-	c.IndentedJSON(http.StatusOK, mapRestaurantsToJSON(restaurants))
+// LisRestaurants godoc
+// @Summary      List restaurants
+// @Description  list restaurants
+// @Tags         restaurants
+// @Accept       json
+// @Produce      json
+// @Success      200  {array}   api.restaurantResponse
+// @Router       /restaurants [get]
+func (r *RestaurantAPI) ListRestaurants(c *gin.Context) {
+	result, err := r.Service.ListRestaurants()
+	if err != nil {
+		ErrorResponse(err, c)
+		return
+	}
+	c.IndentedJSON(http.StatusOK, mapToResponse(result))
 }
 
-func mapRestaurantsToJSON(restaurants []data.Restaurant) []Restaurant {
-	result := make([]Restaurant, len(restaurants))
+// Map service.RestaurantResult array to api.restaurantResponse array
+func mapToResponse(restaurants []service.RestaurantResult) []restaurantResponse {
+	result := make([]restaurantResponse, len(restaurants))
 	for i, restaurant := range restaurants {
-		result[i] = Restaurant{
+		result[i] = restaurantResponse{
 			ID:   restaurant.ID.String(),
 			Name: restaurant.Name,
 		}

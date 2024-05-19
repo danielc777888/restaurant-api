@@ -1,3 +1,4 @@
+// The env package is a wrapper around the .env file and returns config values with the correct types not just strings.
 package env
 
 import (

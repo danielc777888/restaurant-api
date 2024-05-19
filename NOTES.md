@@ -10,7 +10,7 @@
 - Compose and run containers: `docker compose up -d`
 - To restart the containers run: `docker compose restart`
 - Resolve project dependencies: `go mod tidy`
-- Build packages: `go build ./...`
+- Build project: `go build ./...`
 - Copy **.env_sample** to **.env** and set any private values.
 - Reseed database: `go run reseed/main.go`
 - Start api server: `go run api/main.go`
@@ -40,7 +40,7 @@
 - run: `curl -v --silent http://localhost:8080/metrics 2>&1 | grep GET_/api/v1/restaurants`
 
 ### Swagger Docs
-- swag init -g api/restaurant.go
+- To generate swagger docs run: `swag init -g api/*.go`
 
 ### References
 - https://go.dev/

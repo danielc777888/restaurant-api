@@ -44,8 +44,6 @@ func NewUserAPI(Db *gorm.DB) *UserAPI {
 	return &UserAPI{Db: Db}
 }
 
-// @BasePath /api/v1
-
 func (userAPI *UserAPI) RegisterUser(c *gin.Context) {
 	var user RegisterUser
 	if err := c.BindJSON(&user); err != nil {
