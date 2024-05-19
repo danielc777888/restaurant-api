@@ -4,8 +4,8 @@ import (
 	"errors"
 	"fmt"
 	"middleearth/eateries/data"
+	"middleearth/eateries/env"
 	"net/http"
-	"os"
 	"strings"
 	"time"
 
@@ -41,7 +41,8 @@ func (authAPI *AuthAPI) Authenticate(permissions []string) gin.HandlerFunc {
 			}
 
 			// hmacSampleSecret is a []byte containing your secret, e.g. []byte("my_secret_key")
-			return []byte(os.Getenv("JWT_SECRET")), nil
+			jwtSecret := env.JWTSecret()
+			return []byte(jwtSecret), nil
 		})
 
 		if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {

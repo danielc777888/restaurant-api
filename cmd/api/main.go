@@ -5,8 +5,8 @@ import (
 	"middleearth/eateries/api"
 	"middleearth/eateries/cache"
 	"middleearth/eateries/data"
+	"middleearth/eateries/env"
 	"middleearth/eateries/service"
-	"os"
 
 	docs "middleearth/eateries/docs"
 
@@ -31,7 +31,7 @@ func ginRun() {
 	db := data.Connection()
 
 	// init redis
-	redisAddress := os.Getenv("REDIS_ADDRESS")
+	redisAddress := env.RedisAddress()
 	var ctx = context.Background()
 	rdb := redis.NewClient(&redis.Options{
 		Addr:     redisAddress,

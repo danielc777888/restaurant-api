@@ -7,7 +7,6 @@ import (
 	"middleearth/eateries/data"
 	"middleearth/eateries/env"
 	"net/http"
-	"os"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/generative-ai-go/genai"
@@ -64,7 +63,8 @@ func analyzeSentiment(rating string) string {
 	// get sentiment from gemini
 	ctx := context.Background()
 	// Access your API key as an environment variable (see "Set up your API key" above)
-	client, err := genai.NewClient(ctx, option.WithAPIKey(os.Getenv("GEMINI_API_KEY")))
+	apKey := env.GeminiAPIKey()
+	client, err := genai.NewClient(ctx, option.WithAPIKey(apKey))
 	if err != nil {
 		log.Fatal(err)
 	}

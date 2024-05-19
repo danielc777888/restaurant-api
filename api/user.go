@@ -4,8 +4,8 @@ import (
 	"errors"
 	"fmt"
 	"middleearth/eateries/data"
+	"middleearth/eateries/env"
 	"net/http"
-	"os"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -114,7 +114,7 @@ func (userAPI *UserAPI) LoginUser(c *gin.Context) {
 	})
 
 	// Sign and get the complete encoded token as a string using the secret
-	jwtSecret := os.Getenv("JWT_SECRET")
+	jwtSecret := env.JWTSecret()
 	signedToken, err := token.SignedString([]byte(jwtSecret))
 	if err != nil {
 		loginAttempt(dbUser, userAPI)

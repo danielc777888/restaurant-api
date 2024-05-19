@@ -1,12 +1,15 @@
 package data
 
 import (
+	"middleearth/eateries/env"
+
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
+// Get database connection.
 func Connection() *gorm.DB {
-	var dsn = "host=localhost user=dancingponysvc password=password dbname=dancingpony port=5432"
+	var dsn = env.DbDsn()
 	var db, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		panic("Failed to connect database")

@@ -2,13 +2,10 @@ package main
 
 import (
 	"fmt"
-	"os"
 
 	"middleearth/eateries/data"
 
 	"golang.org/x/crypto/bcrypt"
-	"gorm.io/driver/postgres"
-	"gorm.io/gorm"
 
 	"github.com/google/uuid"
 	"github.com/joho/godotenv"
@@ -20,11 +17,7 @@ func main() {
 		panic("Error loading .env file")
 	}
 	fmt.Println("Reseeding database...")
-	dsn := os.Getenv("DB_DSN")
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
-	if err != nil {
-		panic("Failed to connect database")
-	}
+	db := data.Connection()
 
 	db.Migrator().DropTable(&data.Rating{})
 	db.Migrator().DropTable(&data.Dish{})
