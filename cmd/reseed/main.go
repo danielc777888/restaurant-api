@@ -29,6 +29,7 @@ func main() {
 	db.Migrator().DropTable(&data.Rating{})
 	db.Migrator().DropTable(&data.Dish{})
 	db.Migrator().DropTable(&data.Restaurant{})
+	db.Migrator().DropTable(&data.UserPermission{})
 	db.Migrator().DropTable(&data.Permission{})
 	db.Migrator().DropTable(&data.User{})
 
@@ -37,6 +38,7 @@ func main() {
 	db.Migrator().CreateTable(&data.Rating{})
 	db.Migrator().CreateTable(&data.User{})
 	db.Migrator().CreateTable(&data.Permission{})
+	db.Migrator().CreateTable(&data.UserPermission{})
 
 	fmt.Println("Seeding Restaurant data...")
 
@@ -69,6 +71,24 @@ func main() {
 
 	fmt.Println("Seeding User data...")
 
+	// permissions
+	adminPermission := data.Permission{
+		ID:  uuid.New(),
+		Key: "admin",
+	}
+	db.Create(&adminPermission)
+
+	writeDishPermission := data.Permission{
+		ID:  uuid.New(),
+		Key: "write_dish",
+	}
+	db.Create(&writeDishPermission)
+
+	db.Create(&data.Permission{
+		ID:  uuid.New(),
+		Key: "write_restaurant",
+	})
+
 	hashedPassword1, _ := bcrypt.GenerateFromPassword([]byte("password"), 10)
 	db.Create(&data.User{
 		ID:            uuid.New(),
@@ -77,9 +97,8 @@ func main() {
 		Password:      string(hashedPassword1),
 		Locked:        false,
 		LoginAttempts: 0,
-		Permissions: []data.Permission{
-			{ID: uuid.New(), Name: "admin"},
-			{ID: uuid.New(), Name: "dishes"},
+		UserPermissions: []data.UserPermission{
+			{ID: uuid.New(), PermissionID: adminPermission.ID},
 		},
 	})
 	hashedPassword2, _ := bcrypt.GenerateFromPassword([]byte("superpassword"), 10)
@@ -90,6 +109,9 @@ func main() {
 		Password:      string(hashedPassword2),
 		Locked:        false,
 		LoginAttempts: 0,
+		UserPermissions: []data.UserPermission{
+			{ID: uuid.New(), PermissionID: writeDishPermission.ID, RestaurantID: &restaurantID1},
+		},
 	})
 
 }
