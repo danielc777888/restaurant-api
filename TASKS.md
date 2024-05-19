@@ -43,6 +43,6 @@
 | Task  | Done  | Ref |
 | --- | --- | --- |
 | Tests (Unit, Integration, Property) | **TOMMORROW** | |
-| Observability (Prometheus) | **TOMMORROW** | |
+| Observability (Prometheus) | **Y** | |
 | Docs (Comments, Swagger) | **TOMMORROW** | |  | 
 

@@ -43,11 +43,12 @@ func main() {
 	fmt.Println("Seeding Restaurant data...")
 
 	restaurantID1, _ := uuid.Parse("e814691f-b53e-45c4-8253-e2f2a7f5ff35")
+	caviarID, _ := uuid.Parse("44185708-b33e-4781-918b-baba7878348f")
 	db.Create(&data.Restaurant{
 		ID:   restaurantID1,
 		Name: "The Orc Shack",
 		Dishes: []data.Dish{
-			{ID: uuid.New(), Name: "Caviar", Description: "Fish eggs, tasty morsels", Price: 11, RestaurantID: restaurantID1},
+			{ID: caviarID, Name: "Caviar", Description: "Fish eggs, tasty morsels", Price: 11, RestaurantID: restaurantID1},
 			{ID: uuid.New(), Name: "Burger and Fries", Description: "Big portions of oily food", Price: 22, RestaurantID: restaurantID1,
 				Ratings: []data.Rating{
 					{ID: uuid.New(), Description: "This is amazing stuff", RestaurantID: restaurantID1},
@@ -57,11 +58,12 @@ func main() {
 		}})
 
 	restaurantID2, _ := uuid.Parse("522c03dc-45f6-4e74-ab28-1e882ccf74a1")
+	cheesePlatterID, _ := uuid.Parse("c6625af7-4501-4592-99b4-7a5850275e44")
 	db.Create(&data.Restaurant{
 		ID:   restaurantID2,
 		Name: "Dwarf Diner",
 		Dishes: []data.Dish{
-			{ID: uuid.New(), Name: "Cheese platter", Description: "Variety of cheeses from middle earth", Price: 50, RestaurantID: restaurantID2,
+			{ID: cheesePlatterID, Name: "Cheese platter", Description: "Variety of cheeses from middle earth", Price: 50, RestaurantID: restaurantID2,
 				Ratings: []data.Rating{
 					{ID: uuid.New(), Description: "Rotten and gross", RestaurantID: restaurantID2},
 					{ID: uuid.New(), Description: "Amazingly tasty", RestaurantID: restaurantID2},

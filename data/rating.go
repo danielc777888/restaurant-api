@@ -7,7 +7,7 @@ import (
 type Rating struct {
 	ID           uuid.UUID `gorm:"type:uuid"`
 	Description  string
-	Sentiment    *bool
+	Sentiment    *string
 	DishID       uuid.UUID `gorm:"index"`
 	RestaurantID uuid.UUID `gorm:"index"`
 }

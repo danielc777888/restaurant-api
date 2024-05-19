@@ -51,7 +51,7 @@ curl http://localhost:8080/api/v1/ratings \
     --header "Content-Type: application/json" \
     --header "RestaurantID: e814691f-b53e-45c4-8253-e2f2a7f5ff35" \
     --request "POST" \
-    --data '{"description": "Great service", "dishID": "d6262803-770a-4dd1-b680-e0a932d6e636"}'
+    --data '{"description": "Food was wonderful!", "dishID": "44185708-b33e-4781-918b-baba7878348f"}'
 ```
 
 ## Register User
@@ -88,4 +88,13 @@ curl http://localhost:8080/api/v1/users/login \
 ## List Restaurants
 ```
 curl http://localhost:8080/api/v1/restaurants
+```
+
+### Gemini PRO
+```
+curl 'https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key=AIzaSyABKNVcyrO5EqwckFP7TZB4OcNNaTmykek' \
+    --include \
+    --header 'Content-Type: application/json' \
+    --request "POST" \
+    --data '{ "contents" : [ { "parts": [ {"text": "Write a story about a magic backpack"} ] } ] }'
 ```
