@@ -36,7 +36,7 @@ curl http://localhost:8080/api/v1/dishes \
 
 ## Delete Dish
 ```
-curl http://localhost:8080/api/v1/dishes/0566a49d-a5cb-47fb-b967-342c3a33cae8 \
+curl http://localhost:8080/api/v1/dishes/d2b72550-bf06-4ff9-ace3-09a1b83a8218 \
     --include \
     --header "Content-Type: application/json" \
     --header "RestaurantID: e814691f-b53e-45c4-8253-e2f2a7f5ff35" \

@@ -96,6 +96,12 @@ func (dishApi *DishAPI) DeleteDish(c *gin.Context) {
 		c.IndentedJSON(http.StatusNotFound, gin.H{"message": "Dish not found"})
 		return
 	}
+
+	// TODO: Use db transactions
+
+	// delete associated ratings first
+	dishApi.Db.Where("dish_id = ?", dish.ID).Delete(&data.Rating{})
+
 	deleteResult := dishApi.Db.Delete(&dish)
 	if deleteResult.Error != nil {
 		fmt.Println("ERROR: Deleting Dish: ", deleteResult.Error)
