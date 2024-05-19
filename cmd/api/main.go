@@ -51,7 +51,9 @@ func ginRun() {
 	dishAPI := api.NewDishAPI(db, dishCache)
 
 	// init rating
-	ratingAPI := api.NewRatingAPI(db)
+	ratingData := data.NewRatingData(db)
+	ratingService := service.NewRatingService(ratingData)
+	ratingAPI := api.NewRatingAPI(ratingService)
 
 	// init user
 	userAPI := api.NewUserAPI(db)

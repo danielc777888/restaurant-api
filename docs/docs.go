@@ -15,6 +15,50 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/ratings": {
+            "post": {
+                "description": "create a rating",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ratings"
+                ],
+                "summary": "Create a rating",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "RestaurantID header",
+                        "name": "RestaurantID",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "Create rating",
+                        "name": "rating",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/api.createRatingRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/api.ratingResponse"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/restaurants": {
             "get": {
                 "description": "list restaurants",
@@ -43,6 +87,40 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "api.createRatingRequest": {
+            "type": "object",
+            "required": [
+                "description",
+                "dishID"
+            ],
+            "properties": {
+                "description": {
+                    "type": "string",
+                    "maxLength": 200,
+                    "minLength": 3
+                },
+                "dishID": {
+                    "type": "string"
+                }
+            }
+        },
+        "api.ratingResponse": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "dishID": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "restaurantID": {
+                    "type": "string"
+                }
+            }
+        },
         "api.restaurantResponse": {
             "type": "object",
             "properties": {

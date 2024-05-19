@@ -20,9 +20,9 @@ func NewRestaurantData(Db *gorm.DB) *RestaurantData {
 }
 
 // List restaurants
-func (r *RestaurantData) ListRestaurants() ([]Restaurant, error) {
+func (restaurantData *RestaurantData) ListRestaurants() ([]Restaurant, error) {
 	var restaurants []Restaurant
-	result := r.Db.Find(&restaurants)
+	result := restaurantData.Db.Find(&restaurants)
 	if result.Error != nil {
 		return nil, result.Error
 	}

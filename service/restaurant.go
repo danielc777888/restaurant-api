@@ -20,16 +20,13 @@ func NewRestaurantService(Data *data.RestaurantData) *RestaurantService {
 }
 
 // List restaurants
-func (r *RestaurantService) ListRestaurants() ([]RestaurantResult, error) {
-	result, err := r.Data.ListRestaurants()
+func (service *RestaurantService) ListRestaurants() ([]RestaurantResult, error) {
+	restaurants, err := service.Data.ListRestaurants()
 	if err != nil {
 		return nil, err
 	}
-	return mapToResult(result), nil
-}
 
-// Maps data.Restaurant array to service.RestaurantResult array
-func mapToResult(restaurants []data.Restaurant) []RestaurantResult {
+	// map to result array
 	result := make([]RestaurantResult, len(restaurants))
 	for i, restaurant := range restaurants {
 		result[i] = RestaurantResult{
@@ -37,5 +34,5 @@ func mapToResult(restaurants []data.Restaurant) []RestaurantResult {
 			Name: restaurant.Name,
 		}
 	}
-	return result
+	return result, nil
 }

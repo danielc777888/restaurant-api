@@ -25,8 +25,8 @@ func NewRestaurantAPI(Service *service.RestaurantService) *RestaurantAPI {
 }
 
 // Get RestaurantID from gin context request header
-func GetRestaurantHeader(c *gin.Context) (uuid.UUID, error) {
-	header := c.Request.Header.Get("RestaurantID")
+func GetRestaurantHeader(ginContext *gin.Context) (uuid.UUID, error) {
+	header := ginContext.Request.Header.Get("RestaurantID")
 	if header == "" {
 		fmt.Println("Invalid restaurant header")
 		return uuid.Nil, errors.New("restaurant header not found")
@@ -47,17 +47,14 @@ func GetRestaurantHeader(c *gin.Context) (uuid.UUID, error) {
 // @Produce      json
 // @Success      200  {array}   api.restaurantResponse
 // @Router       /restaurants [get]
-func (r *RestaurantAPI) ListRestaurants(c *gin.Context) {
-	result, err := r.Service.ListRestaurants()
+func (api *RestaurantAPI) ListRestaurants(ginContext *gin.Context) {
+	restaurants, err := api.Service.ListRestaurants()
 	if err != nil {
-		ErrorResponse(err, c)
+		ErrorResponse(err, ginContext)
 		return
 	}
-	c.IndentedJSON(http.StatusOK, mapToResponse(result))
-}
 
-// Map service.RestaurantResult array to api.restaurantResponse array
-func mapToResponse(restaurants []service.RestaurantResult) []restaurantResponse {
+	// map to response
 	result := make([]restaurantResponse, len(restaurants))
 	for i, restaurant := range restaurants {
 		result[i] = restaurantResponse{
@@ -65,5 +62,5 @@ func mapToResponse(restaurants []service.RestaurantResult) []restaurantResponse 
 			Name: restaurant.Name,
 		}
 	}
-	return result
+	ginContext.IndentedJSON(http.StatusOK, result)
 }

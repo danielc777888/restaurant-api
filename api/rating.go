@@ -1,103 +1,82 @@
 package api
 
 import (
-	"context"
-	"fmt"
-	"log"
-	"middleearth/eateries/data"
-	"middleearth/eateries/env"
+	"middleearth/eateries/service"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/google/generative-ai-go/genai"
 	"github.com/google/uuid"
-	"google.golang.org/api/option"
-	"gorm.io/gorm"
 )
 
-type CreateRating struct {
-	Description string `json:"description"`
-	DishID      string `json:"dishID"`
+type createRatingRequest struct {
+	Description string `json:"description" binding:"required,min=3,max=200"`
+	DishID      string `json:"dishID" binding:"required"`
 }
 
-type Rating struct {
+type ratingResponse struct {
 	ID           string `json:"id"`
 	Description  string `json:"description"`
 	DishID       string `json:"dishID"`
 	RestaurantID string `json:"restaurantID"`
+	Sentiment    string `json:"sentiment"`
 }
 
 type RatingAPI struct {
-	Db *gorm.DB
+	Service *service.RatingService
 }
 
-func NewRatingAPI(Db *gorm.DB) *RatingAPI {
-	return &RatingAPI{Db: Db}
+func NewRatingAPI(Service *service.RatingService) *RatingAPI {
+	return &RatingAPI{Service: Service}
 }
 
-// @BasePath /api/v1
+// CreateRating godoc
+// @Summary      Create a rating
+// @Description  create a rating
+// @Tags         ratings
+// @Accept       json
+// @Produce      json
+// @Param		 RestaurantID	header		string	true	"RestaurantID header"
+// @Param		 rating body    api.createRatingRequest   true  "Create rating"
+// @Success      200  {array}   api.ratingResponse
+// @Router       /ratings [post]
+func (api *RatingAPI) CreateRating(ginContext *gin.Context) {
 
-func (ratingApi *RatingAPI) CreateRating(c *gin.Context) {
-	restaurantID, err := GetRestaurantHeader(c)
+	restaurantID, err := GetRestaurantHeader(ginContext)
 	if err != nil {
-		c.IndentedJSON(http.StatusBadRequest, err)
-	}
-	var rating CreateRating
-	if err := c.BindJSON(&rating); err != nil {
+		ErrorResponse(err, ginContext)
 		return
 	}
-	dbRating := mapCreateRatingToDB(restaurantID, rating)
 
-	// TODO: Takes quite long, need to use goroutines??
-	if env.LLMEnabled() {
-		sentiment := analyzeSentiment(dbRating.Description)
-		dbRating.Sentiment = &sentiment
+	var request createRatingRequest
+	if err := ginContext.BindJSON(&request); err != nil {
+		ErrorResponse(err, ginContext)
+		return
 	}
 
-	result := ratingApi.Db.Create(&dbRating)
-	fmt.Printf("DB result error %s, rows %d", result.Error, result.RowsAffected)
-	c.IndentedJSON(http.StatusOK, mapRatingToJSON(dbRating))
-}
+	// map to rating action
+	dishID, _ := uuid.Parse(request.DishID)
+	action := service.CreateRatingAction{
+		Description: request.Description,
+		DishID:      dishID,
+	}
 
-func analyzeSentiment(rating string) string {
-	// get sentiment from gemini
-	ctx := context.Background()
-	// Access your API key as an environment variable (see "Set up your API key" above)
-	apKey := env.GeminiAPIKey()
-	client, err := genai.NewClient(ctx, option.WithAPIKey(apKey))
+	createdRating, err := api.Service.CreateRating(restaurantID, action)
 	if err != nil {
-		log.Fatal(err)
+		ErrorResponse(err, ginContext)
+		return
 	}
-	defer client.Close()
 
-	// For text-only input, use the gemini-pro model,
-
-	model := client.GenerativeModel("gemini-pro")
-	prompt := fmt.Sprintf("Analyze the sentiment of the following Restaurant Dish Review and Classify it as POSITIVE, NEGATIVE, or NEUTRAL. '%s'", rating)
-	fmt.Println("Here is the prompt to user:", prompt)
-	resp, err := model.GenerateContent(ctx, genai.Text(prompt))
-	if err != nil {
-		log.Fatal(err)
+	// map to rating response
+	sentiment := ""
+	if createdRating.Sentiment != nil {
+		sentiment = *createdRating.Sentiment
 	}
-	fmt.Println("****GEMINI_PRO***::", resp.Candidates[0].Content.Parts[0])
-	classification := fmt.Sprint(resp.Candidates[0].Content.Parts[0])
-	return classification
-}
-
-func mapCreateRatingToDB(restaurantID uuid.UUID, rating CreateRating) data.Rating {
-	dishID, _ := uuid.Parse(rating.DishID)
-	return data.Rating{
-		ID:           uuid.New(),
-		Description:  rating.Description,
-		DishID:       dishID,
-		RestaurantID: restaurantID,
+	result := ratingResponse{
+		ID:           createdRating.ID.String(),
+		Description:  createdRating.Description,
+		DishID:       createdRating.DishID.String(),
+		RestaurantID: createdRating.RestaurantID.String(),
+		Sentiment:    sentiment,
 	}
-}
-
-func mapRatingToJSON(rating data.Rating) Rating {
-	return Rating{
-		ID:          rating.ID.String(),
-		Description: rating.Description,
-		DishID:      rating.DishID.String(),
-	}
+	ginContext.IndentedJSON(http.StatusOK, result)
 }
