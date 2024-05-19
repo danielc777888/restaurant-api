@@ -36,11 +36,11 @@ curl http://localhost:8080/api/v1/dishes \
 
 ## Delete Dish
 ```
-curl http://localhost:8080/api/v1/dishes/d6262803-770a-4dd1-b680-e0a932d6e636 \
+curl http://localhost:8080/api/v1/dishes/0566a49d-a5cb-47fb-b967-342c3a33cae8 \
     --include \
     --header "Content-Type: application/json" \
     --header "RestaurantID: e814691f-b53e-45c4-8253-e2f2a7f5ff35" \
-    --header "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MTg2NDc2NDIsInN1YiI6IjIyM2FhY2Y3LTM1ZjgtNDFkZS05ZDM2LTFiNjAxNmU5NDUzNCJ9.yGZkvaSe6StgGNTy6fS6XtCHMPBM-f5DCUBscpsrvCU" \
+    --header "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MTg3MTM1MTIsInN1YiI6IjRhMGVkNTQ1LTY2M2QtNGI2OS1iNzA5LTg4MmIxMGI1ZGZjMiJ9.XVdCBb5aONRuzyRhnuR-EfT9Brx7-sn9binGsq_fE7s" \
     --request "DELETE"
 ```
 
@@ -69,7 +69,19 @@ curl http://localhost:8080/api/v1/users/login \
     --include \
     --header "Content-Type: application/json" \
     --request "POST" \
-    --data '{"emailAddress": "smaug@erabor.com","password": "superpassword"}'
+    --data '{"emailAddress": "smaug@erabor.com","password": "password"}'
+
+curl http://localhost:8080/api/v1/users/login \
+    --include \
+    --header "Content-Type: application/json" \
+    --request "POST" \
+    --data '{"emailAddress": "gimli@erabor.com","password": "superpassword"}'
+
+curl http://localhost:8080/api/v1/users/login \
+    --include \
+    --header "Content-Type: application/json" \
+    --request "POST" \
+    --data '{"emailAddress": "keely@erabor.com","password": "password"}'
 ```
 
 

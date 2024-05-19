@@ -96,7 +96,12 @@ func (dishApi *DishAPI) DeleteDish(c *gin.Context) {
 		c.IndentedJSON(http.StatusNotFound, gin.H{"message": "Dish not found"})
 		return
 	}
-	dishApi.Db.Delete(&dish)
+	deleteResult := dishApi.Db.Delete(&dish)
+	if deleteResult.Error != nil {
+		fmt.Println("ERROR: Deleting Dish: ", deleteResult.Error)
+		c.IndentedJSON(http.StatusBadRequest, gin.H{"message": "Error deleting dish"})
+		return
+	}
 	if env.CacheEnabled() {
 		dishApi.Cache.DeleteDishes(restaurantID)
 	}

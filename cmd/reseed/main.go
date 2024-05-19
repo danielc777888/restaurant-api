@@ -90,27 +90,29 @@ func main() {
 	})
 
 	hashedPassword1, _ := bcrypt.GenerateFromPassword([]byte("password"), 10)
+	keelyID := uuid.New()
 	db.Create(&data.User{
-		ID:            uuid.New(),
+		ID:            keelyID,
 		Name:          "Keely",
-		EmailAddress:  "keely@erebor.com",
+		EmailAddress:  "keely@erabor.com",
 		Password:      string(hashedPassword1),
 		Locked:        false,
 		LoginAttempts: 0,
 		UserPermissions: []data.UserPermission{
-			{ID: uuid.New(), PermissionID: adminPermission.ID},
+			{ID: uuid.New(), UserID: keelyID, PermissionID: adminPermission.ID},
 		},
 	})
 	hashedPassword2, _ := bcrypt.GenerateFromPassword([]byte("superpassword"), 10)
+	gimliID := uuid.New()
 	db.Create(&data.User{
-		ID:            uuid.New(),
+		ID:            gimliID,
 		Name:          "Gimli",
 		EmailAddress:  "gimli@erabor.com",
 		Password:      string(hashedPassword2),
 		Locked:        false,
 		LoginAttempts: 0,
 		UserPermissions: []data.UserPermission{
-			{ID: uuid.New(), PermissionID: writeDishPermission.ID, RestaurantID: &restaurantID1},
+			{ID: uuid.New(), UserID: gimliID, PermissionID: writeDishPermission.ID, RestaurantID: &restaurantID1},
 		},
 	})
 
