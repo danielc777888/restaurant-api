@@ -15,10 +15,17 @@ import (
 
 	swaggerfiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
+
+	gpmiddleware "github.com/carousell/gin-prometheus-middleware"
 )
 
 func ginRun() {
 	r := gin.Default()
+
+	// add prometheus instrumenting middleware
+	p := gpmiddleware.NewPrometheus("gin")
+	p.Use(r)
+
 	db := data.Connection()
 
 	redisAddress := os.Getenv("REDIS_ADDRESS")

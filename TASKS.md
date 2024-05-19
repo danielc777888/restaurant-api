@@ -20,7 +20,7 @@
 | Authenticate APIs | **Y** | |
 | Validate APIs | **Y** | |
 | Brute Password Password Check | **Y**| |
-| User Permissions | **TOMMORROW** | | 
+| User Permissions | **Y** | | 
 
 // checkout https://www.squash.io/golang-security-jwt-authentication-middleware-and-crypto-packages-in-gin/
 

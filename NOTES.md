@@ -67,6 +67,9 @@
 ### tests
 - property based tests with rapid
 
+### metrics
+- run: `curl -v --silent http://localhost:8080/metrics 2>&1 | grep GET_/api/v1/restaurants`
+
 ### swagger docs
 - swag init -g api/restaurant.go
 
