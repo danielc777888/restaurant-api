@@ -23,6 +23,7 @@ func NewAuthAPI(Db *gorm.DB) *AuthAPI {
 	return &AuthAPI{Db: Db}
 }
 
+// Middleware for authenticating user and checking required permissions for an api
 func (authAPI *AuthAPI) Authenticate(permissions []string) gin.HandlerFunc {
 
 	return func(c *gin.Context) {
@@ -35,12 +36,10 @@ func (authAPI *AuthAPI) Authenticate(permissions []string) gin.HandlerFunc {
 
 		// Validate signed token
 		token, _ := jwt.Parse(signedToken, func(token *jwt.Token) (interface{}, error) {
-			// Don't forget to validate the alg is what you expect:
 			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 				return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 			}
 
-			// hmacSampleSecret is a []byte containing your secret, e.g. []byte("my_secret_key")
 			jwtSecret := env.JWTSecret()
 			return []byte(jwtSecret), nil
 		})
@@ -49,6 +48,7 @@ func (authAPI *AuthAPI) Authenticate(permissions []string) gin.HandlerFunc {
 			// Check the expiry date
 			if float64(time.Now().Unix()) > claims["exp"].(float64) {
 				c.AbortWithStatus(http.StatusUnauthorized)
+				return
 			}
 
 			// Find the user with token Subject
@@ -56,35 +56,31 @@ func (authAPI *AuthAPI) Authenticate(permissions []string) gin.HandlerFunc {
 			subString, _ := claims["sub"].(string)
 			userId, _ := uuid.Parse(subString)
 			authAPI.Db.First(&user, userId)
-			fmt.Println("##### AUTH User:", user.ID)
+			fmt.Println("Authenticated user:", user.ID)
 			if user.ID == uuid.Nil {
-				fmt.Println("##### ABORT User:", user.ID)
 				c.AbortWithStatus(http.StatusUnauthorized)
+				return
 			}
 
 			if user.Locked {
 				fmt.Println("User account locked:", user.ID)
 				c.AbortWithStatus(http.StatusUnauthorized)
+				return
 			}
 
-			// authoroise if there are required permissions
 			if len(permissions) > 0 {
 				// get permissions from user
 				var userPermissions []data.UserPermission
 				authAPI.Db.Joins("Permission", authAPI.Db.Where("user_id = ?", user.ID)).Find(&userPermissions)
 
-				fmt.Println("### GOT USER PERMISSIONS:", userPermissions)
-
 				if !isSuperAdmin(userPermissions) {
 					restaurantID, _ := GetRestaurantHeader(c)
 					if !hasAllPermissions(restaurantID, userPermissions, permissions) {
-						fmt.Println("$$$$ USER DOES NOT HAVE ALL THE FOLLOWING PERMISSIONS:")
 						c.AbortWithStatus(http.StatusUnauthorized)
+						return
 					}
 				}
 			}
-
-			// if user does not have required permissions throw an error
 
 			c.Next()
 		} else {
@@ -93,17 +89,18 @@ func (authAPI *AuthAPI) Authenticate(permissions []string) gin.HandlerFunc {
 	}
 }
 
-// TODO Use a map to prevent nested loops
+// Checks to see if users has all the required permissions, using her userPermissions list.
+// TODO: Use a map instead of nested loops
 func hasAllPermissions(restaurantID uuid.UUID, userPermissions []data.UserPermission, permissions []string) bool {
 	for _, permission := range permissions {
 		if !hasPermission(restaurantID, userPermissions, permission) {
 			return false
 		}
 	}
-	fmt.Println(">>>>>> USER HAS ALL PERMISSIONS: GOOD TO GO!!!!")
 	return true
 }
 
+// Checks to see whether userPermissions has a specific required permission.
 func hasPermission(restaurantID uuid.UUID, userPermissions []data.UserPermission, permission string) bool {
 	for _, userPermission := range userPermissions {
 
@@ -120,16 +117,17 @@ func hasPermission(restaurantID uuid.UUID, userPermissions []data.UserPermission
 	return false
 }
 
+// Checks to see if user is a superAdmin. ie. Has a admin permission not associated with a restaurant.
 func isSuperAdmin(userPermissions []data.UserPermission) bool {
 	for _, userPermission := range userPermissions {
 		if userPermission.Permission.Key == "admin" && userPermission.RestaurantID == nil {
-			fmt.Println("#### FOUND SUPER ADMIN!!!!")
 			return true
 		}
 	}
 	return false
 }
 
+// Extracts auth bearer token from Auth header
 func extractBearerToken(header string) (string, error) {
 	if header == "" {
 		return "", errors.New("invalid header")

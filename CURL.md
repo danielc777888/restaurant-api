@@ -50,6 +50,7 @@ curl http://localhost:8080/api/v1/ratings \
     --include \
     --header "Content-Type: application/json" \
     --header "RestaurantID: e814691f-b53e-45c4-8253-e2f2a7f5ff35" \
+    --header "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MTg3NDIyODcsInN1YiI6IjhhYmMyMGI4LTYzYzEtNGJhZi04MGIzLTM1MmM4ODAzYmNiNSJ9.oqQq32ehtDAPkPgwdv0JyLvuSpu5UB5lYJUOsaDlRZE" \
     --request "POST" \
     --data '{"description": "Food was wonderful!", "dishID": "44185708-b33e-4781-918b-baba7878348f"}'
 ```
@@ -69,12 +70,6 @@ curl http://localhost:8080/api/v1/users/login \
     --include \
     --header "Content-Type: application/json" \
     --request "POST" \
-    --data '{"emailAddress": "smaug@erabor.com","password": "password"}'
-
-curl http://localhost:8080/api/v1/users/login \
-    --include \
-    --header "Content-Type: application/json" \
-    --request "POST" \
     --data '{"emailAddress": "gimli@erabor.com","password": "superpassword"}'
 
 curl http://localhost:8080/api/v1/users/login \
@@ -82,6 +77,12 @@ curl http://localhost:8080/api/v1/users/login \
     --header "Content-Type: application/json" \
     --request "POST" \
     --data '{"emailAddress": "keely@erabor.com","password": "password"}'
+
+curl http://localhost:8080/api/v1/users/login \
+--include \
+--header "Content-Type: application/json" \
+--request "POST" \
+--data '{"emailAddress": "smaug@erabor.com","password": "password"}'
 ```
 
 

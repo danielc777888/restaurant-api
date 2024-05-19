@@ -72,7 +72,7 @@ func ginRun() {
 		v1.PATCH("/dishes", dishAPI.UpdateDish)
 		v1.DELETE("/dishes/:id", authAPI.Authenticate([]string{"write_dish"}), dishAPI.DeleteDish)
 
-		v1.POST("/ratings", ratingAPI.CreateRating)
+		v1.POST("/ratings", authAPI.Authenticate([]string{}), ratingAPI.CreateRating)
 
 		v1.POST("/users/register", userAPI.RegisterUser)
 		v1.POST("/users/login", userAPI.LoginUser)

@@ -31,6 +31,13 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
+                        "description": "Authentication header",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
                         "description": "RestaurantID header",
                         "name": "RestaurantID",
                         "in": "header",
@@ -117,6 +124,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "restaurantID": {
+                    "type": "string"
+                },
+                "sentiment": {
                     "type": "string"
                 }
             }

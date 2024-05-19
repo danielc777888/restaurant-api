@@ -35,6 +35,7 @@ func NewRatingAPI(Service *service.RatingService) *RatingAPI {
 // @Tags         ratings
 // @Accept       json
 // @Produce      json
+// @Param		 Authorization	header		string	true	"Authentication header"
 // @Param		 RestaurantID	header		string	true	"RestaurantID header"
 // @Param		 rating body    api.createRatingRequest   true  "Create rating"
 // @Success      200  {array}   api.ratingResponse

@@ -21,6 +21,8 @@ definitions:
         type: string
       restaurantID:
         type: string
+      sentiment:
+        type: string
     type: object
   api.restaurantResponse:
     properties:
@@ -38,6 +40,11 @@ paths:
       - application/json
       description: create a rating
       parameters:
+      - description: Authentication header
+        in: header
+        name: Authorization
+        required: true
+        type: string
       - description: RestaurantID header
         in: header
         name: RestaurantID
