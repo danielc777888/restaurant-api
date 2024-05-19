@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"middleearth/eateries/data"
+	"middleearth/eateries/env"
 	"net/http"
 	"os"
 
@@ -49,6 +50,17 @@ func (ratingApi *RatingAPI) CreateRating(c *gin.Context) {
 	dbRating := mapCreateRatingToDB(restaurantID, rating)
 
 	// TODO: Takes quite long, need to use goroutines??
+	if env.LLMEnabled() {
+		sentiment := analyzeSentiment(dbRating.Description)
+		dbRating.Sentiment = &sentiment
+	}
+
+	result := ratingApi.Db.Create(&dbRating)
+	fmt.Printf("DB result error %s, rows %d", result.Error, result.RowsAffected)
+	c.IndentedJSON(http.StatusOK, mapRatingToJSON(dbRating))
+}
+
+func analyzeSentiment(rating string) string {
 	// get sentiment from gemini
 	ctx := context.Background()
 	// Access your API key as an environment variable (see "Set up your API key" above)
@@ -61,7 +73,7 @@ func (ratingApi *RatingAPI) CreateRating(c *gin.Context) {
 	// For text-only input, use the gemini-pro model,
 
 	model := client.GenerativeModel("gemini-pro")
-	prompt := fmt.Sprintf("Analyze the sentiment of the following Restaurant Dish Review and Classify it as POSITIVE, NEGATIVE, or NEUTRAL. '%s'", dbRating.Description)
+	prompt := fmt.Sprintf("Analyze the sentiment of the following Restaurant Dish Review and Classify it as POSITIVE, NEGATIVE, or NEUTRAL. '%s'", rating)
 	fmt.Println("Here is the prompt to user:", prompt)
 	resp, err := model.GenerateContent(ctx, genai.Text(prompt))
 	if err != nil {
@@ -69,11 +81,7 @@ func (ratingApi *RatingAPI) CreateRating(c *gin.Context) {
 	}
 	fmt.Println("****GEMINI_PRO***::", resp.Candidates[0].Content.Parts[0])
 	classification := fmt.Sprint(resp.Candidates[0].Content.Parts[0])
-	dbRating.Sentiment = &classification
-
-	result := ratingApi.Db.Create(&dbRating)
-	fmt.Printf("DB result error %s, rows %d", result.Error, result.RowsAffected)
-	c.IndentedJSON(http.StatusOK, mapRatingToJSON(dbRating))
+	return classification
 }
 
 func mapCreateRatingToDB(restaurantID uuid.UUID, rating CreateRating) data.Rating {
