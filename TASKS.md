@@ -27,7 +27,7 @@
 | Task | Done  |
 | --- | --- |
 | API Performance (Caching) | **Y**|
-| Multi-Tenant (Restaurants) | **Y** |
+| Multi-Tenant (Restaurants) | **Y**|
 
 ## Task 4
 

@@ -17,9 +17,9 @@ type createDishRequest struct {
 }
 
 type updateDishRequest struct {
-	ID           string `json:"id" binding:"required,min=3,max=20"`
-	Name         string `json:"name" binding:"required,min=3,max=200"`
-	Description  string `json:"description" binding:"required"`
+	ID           string `json:"id" binding:"required"`
+	Name         string `json:"name" binding:"required,min=3,max=50"`
+	Description  string `json:"description" binding:"required,min=3,max=200"`
 	Price        uint   `json:"price" binding:"required"`
 	RestaurantID string `json:"restaurantID" binding:"required"`
 }
@@ -121,7 +121,9 @@ func (dishApi *DishAPI) UpdateDish(ginContext *gin.Context) {
 	}
 
 	// map to dish action
+	dishID, _ := uuid.Parse(request.ID)
 	action := service.UpdateDishAction{
+		ID:           dishID,
 		Name:         request.Name,
 		Description:  request.Description,
 		Price:        request.Price,
@@ -147,9 +149,9 @@ func (dishApi *DishAPI) UpdateDish(ginContext *gin.Context) {
 // @Produce      json
 // @Param		 Authorization	header		string	true	"Authentication header"
 // @Param		 RestaurantID	header		string	true	"RestaurantID header"
-// @Param		 id	path		string		true	"Dish ID"
+// @Param		 dish_id	path		string		true	"Dish ID"
 // @Success      200
-// @Router       /dishes [delete]
+// @Router       /dishes/{dish_id} [delete]
 func (dishApi *DishAPI) DeleteDish(ginContext *gin.Context) {
 	restaurantID, err := GetRestaurantHeader(ginContext)
 	if err != nil {
@@ -177,9 +179,9 @@ func (dishApi *DishAPI) DeleteDish(ginContext *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param		 RestaurantID	header		string	true	"RestaurantID header"
-// @Param		 id	path		string		true	"Dish ID"
+// @Param		 dish_id	path		string		true	"Dish ID"
 // @Success      200  {object}   api.dishResponse
-// @Router       /dishes/:id [get]
+// @Router       /dishes/{dish_id} [get]
 func (dishApi *DishAPI) GetDish(ginContext *gin.Context) {
 	restaurantID, err := GetRestaurantHeader(ginContext)
 	if err != nil {

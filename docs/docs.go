@@ -95,47 +95,6 @@ const docTemplate = `{
                     }
                 }
             },
-            "delete": {
-                "description": "delete a dish",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "dishes"
-                ],
-                "summary": "Delete a dish",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Authentication header",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "RestaurantID header",
-                        "name": "RestaurantID",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Dish ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK"
-                    }
-                }
-            },
             "patch": {
                 "description": "updated a dish",
                 "consumes": [
@@ -183,7 +142,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/dishes/:id": {
+        "/dishes/{dish_id}": {
             "get": {
                 "description": "get a dish",
                 "consumes": [
@@ -207,7 +166,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "Dish ID",
-                        "name": "id",
+                        "name": "dish_id",
                         "in": "path",
                         "required": true
                     }
@@ -218,6 +177,47 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/api.dishResponse"
                         }
+                    }
+                }
+            },
+            "delete": {
+                "description": "delete a dish",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "dishes"
+                ],
+                "summary": "Delete a dish",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Authentication header",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "RestaurantID header",
+                        "name": "RestaurantID",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Dish ID",
+                        "name": "dish_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
                     }
                 }
             }
@@ -535,16 +535,16 @@ const docTemplate = `{
             ],
             "properties": {
                 "description": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 200,
+                    "minLength": 3
                 },
                 "id": {
-                    "type": "string",
-                    "maxLength": 20,
-                    "minLength": 3
+                    "type": "string"
                 },
                 "name": {
                     "type": "string",
-                    "maxLength": 200,
+                    "maxLength": 50,
                     "minLength": 3
                 },
                 "price": {

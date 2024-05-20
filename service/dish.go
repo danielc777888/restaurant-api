@@ -71,16 +71,18 @@ func (service *DishService) CreateDish(restaurantID uuid.UUID, action CreateDish
 // Update a dish from an action for a specific restaurant.
 // Returns a dish result or error.
 func (service *DishService) UpdateDish(restaurantID uuid.UUID, action UpdateDishAction) (*DishResult, error) {
-	// map to dish data
-	dish := data.Dish{
-		ID:           uuid.New(),
-		RestaurantID: restaurantID,
-		Name:         action.Name,
-		Description:  action.Description,
-		Price:        action.Price,
-	}
 
-	updatedDish, err := service.Data.UpdateDish(restaurantID, dish)
+	var dish data.Dish
+	retrievedDish, err := service.Data.GetDish(restaurantID, action.ID, dish)
+	if err != nil {
+		return nil, err
+	}
+	// map to dish data
+	retrievedDish.Name = action.Name
+	retrievedDish.Description = action.Description
+	retrievedDish.Price = action.Price
+
+	updatedDish, err := service.Data.UpdateDish(restaurantID, *retrievedDish)
 	if err != nil {
 		return nil, err
 	}

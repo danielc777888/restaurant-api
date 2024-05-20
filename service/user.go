@@ -96,7 +96,8 @@ func (service *UserService) LoginUser(action LoginUserAction) (*LoggedInUserResu
 	compareErr := bcrypt.CompareHashAndPassword([]byte(retrievedUser.Password), []byte(action.Password))
 
 	if compareErr != nil {
-		loginAttempt(*retrievedUser)
+		fmt.Println("Error comparing password, userID: ", retrievedUser.ID)
+		loginAttempt(retrievedUser)
 		service.Data.UpdateUser(*retrievedUser)
 		return nil, errors.New("invalid email address or password")
 	}
@@ -111,7 +112,9 @@ func (service *UserService) LoginUser(action LoginUserAction) (*LoggedInUserResu
 	jwtSecret := env.JWTSecret()
 	signedToken, err := token.SignedString([]byte(jwtSecret))
 	if err != nil {
-		loginAttempt(*retrievedUser)
+		fmt.Println("Error comparing password, userID: ", retrievedUser.ID)
+		loginAttempt(retrievedUser)
+		fmt.Println("ERR2: ", retrievedUser)
 		service.Data.UpdateUser(*retrievedUser)
 		return nil, errors.New("invalid email address or password")
 	}
@@ -125,9 +128,10 @@ func (service *UserService) LoginUser(action LoginUserAction) (*LoggedInUserResu
 	return &result, nil
 }
 
-func loginAttempt(dbUser data.User) {
-	dbUser.LoginAttempts = dbUser.LoginAttempts + 1
-	if dbUser.LoginAttempts >= 3 {
-		dbUser.Locked = true
+// A login attempt from user. If above a certain threshold, user account will be locked.
+func loginAttempt(user *data.User) {
+	user.LoginAttempts = user.LoginAttempts + 1
+	if user.LoginAttempts >= 3 {
+		user.Locked = true
 	}
 }

@@ -1,8 +1,5 @@
 # NOTES
 
-## For async tasks
-- Use https://github.com/hibiken/asynq
-- Rate sentiments
 
 ## Setup
 - Install go, checkout solution
@@ -17,9 +14,10 @@
 - Browse here to read the api docs and try it out: `http://localhost:8080/swagger/index.html`
 - Browse here to view prometheus metrics: `http://localhost:8080/metrics`
 - To see some curl examples see **CURL.md**
+- To get a GEMINI API KEY go here: `https://ai.google.dev/gemini-api/docs/api-key`
 
 ## Swagger Docs
-- To generate swagger docs run: `swag init -g api/*.go`
+- To re-generate swagger docs run: `swag init -g api/*.go`
 
 ## References
 - https://go.dev/

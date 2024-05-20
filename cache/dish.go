@@ -20,10 +20,12 @@ func NewDishCache(Redis *redis.Client, Ctx *context.Context) *DishCache {
 	return &DishCache{Redis: Redis, Ctx: Ctx}
 }
 
+// Gets list dish cache key
 func getListDishKey(restaurantID uuid.UUID) string {
 	return fmt.Sprintf("restaurant_dishes:%s", restaurantID.String())
 }
 
+// Adds dishes to cache using restaurantID as key
 func (dishCache *DishCache) AddDishes(restaurantID uuid.UUID, dishes []data.Dish) {
 	key := getListDishKey(restaurantID)
 	fmt.Println("SET key to cache:", key)
@@ -34,6 +36,7 @@ func (dishCache *DishCache) AddDishes(restaurantID uuid.UUID, dishes []data.Dish
 	}
 }
 
+// Deletes dishes from cache using restaurantID as key
 func (dishCache *DishCache) DeleteDishes(restaurantID uuid.UUID) {
 	key := getListDishKey(restaurantID)
 	fmt.Println("DEL key from cache:", key)
@@ -43,6 +46,7 @@ func (dishCache *DishCache) DeleteDishes(restaurantID uuid.UUID) {
 	}
 }
 
+// Get dishes from cache using restaurantID as key
 func (dishCache *DishCache) GetDishes(restaurantID uuid.UUID) ([]data.Dish, error) {
 	var dishes []data.Dish
 	key := getListDishKey(restaurantID)

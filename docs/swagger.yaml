@@ -106,13 +106,13 @@ definitions:
   api.updateDishRequest:
     properties:
       description:
-        type: string
-      id:
-        maxLength: 20
+        maxLength: 200
         minLength: 3
         type: string
+      id:
+        type: string
       name:
-        maxLength: 200
+        maxLength: 50
         minLength: 3
         type: string
       price:
@@ -143,34 +143,6 @@ info:
   contact: {}
 paths:
   /dishes:
-    delete:
-      consumes:
-      - application/json
-      description: delete a dish
-      parameters:
-      - description: Authentication header
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      - description: RestaurantID header
-        in: header
-        name: RestaurantID
-        required: true
-        type: string
-      - description: Dish ID
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-      summary: Delete a dish
-      tags:
-      - dishes
     get:
       consumes:
       - application/json
@@ -255,7 +227,35 @@ paths:
       summary: Create a dish
       tags:
       - dishes
-  /dishes/:id:
+  /dishes/{dish_id}:
+    delete:
+      consumes:
+      - application/json
+      description: delete a dish
+      parameters:
+      - description: Authentication header
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: RestaurantID header
+        in: header
+        name: RestaurantID
+        required: true
+        type: string
+      - description: Dish ID
+        in: path
+        name: dish_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: Delete a dish
+      tags:
+      - dishes
     get:
       consumes:
       - application/json
@@ -268,7 +268,7 @@ paths:
         type: string
       - description: Dish ID
         in: path
-        name: id
+        name: dish_id
         required: true
         type: string
       produces:
