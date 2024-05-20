@@ -41,6 +41,11 @@ func ginRun() {
 
 	// rdb.FlushAll(ctx).Result()
 
+	// init rating
+	ratingData := data.NewRatingData(db)
+	ratingService := service.NewRatingService(ratingData)
+	ratingAPI := api.NewRatingAPI(ratingService)
+
 	// init restaurant
 	restaurantData := data.NewRestaurantData(db)
 	restaurantService := service.NewRestaurantService(restaurantData)
@@ -48,12 +53,9 @@ func ginRun() {
 
 	// init dish
 	dishCache := cache.NewDishCache(rdb, &ctx)
-	dishAPI := api.NewDishAPI(db, dishCache)
-
-	// init rating
-	ratingData := data.NewRatingData(db)
-	ratingService := service.NewRatingService(ratingData)
-	ratingAPI := api.NewRatingAPI(ratingService)
+	dishData := data.NewDishData(db)
+	dishService := service.NewDishService(dishData, ratingData, dishCache)
+	dishAPI := api.NewDishAPI(dishService)
 
 	// init user
 	userData := data.NewUserData(db)
@@ -61,7 +63,6 @@ func ginRun() {
 	userAPI := api.NewUserAPI(userService)
 	authAPI := api.NewAuthAPI(db)
 
-	// TODO: Add auth, perhaps org middle ware, try different groupongs
 	// init routes
 	docs.SwaggerInfo.BasePath = "/api/v1"
 	v1 := r.Group("/api/v1")
@@ -69,9 +70,9 @@ func ginRun() {
 		v1.GET("/restaurants", restaurantAPI.ListRestaurants)
 
 		v1.GET("/dishes/:id", dishAPI.GetDish)
-		v1.GET("/dishes", dishAPI.ListDish)
-		v1.POST("/dishes", dishAPI.CreateDish)
-		v1.PATCH("/dishes", dishAPI.UpdateDish)
+		v1.GET("/dishes", dishAPI.ListDishes)
+		v1.POST("/dishes", authAPI.Authenticate([]string{"write_dish"}), dishAPI.CreateDish)
+		v1.PATCH("/dishes", authAPI.Authenticate([]string{"write_dish"}), dishAPI.UpdateDish)
 		v1.DELETE("/dishes/:id", authAPI.Authenticate([]string{"write_dish"}), dishAPI.DeleteDish)
 
 		v1.POST("/ratings", authAPI.Authenticate([]string{}), ratingAPI.CreateRating)

@@ -29,3 +29,12 @@ func (ratingData *RatingData) CreateRating(rating Rating) (*Rating, error) {
 	}
 	return &rating, nil
 }
+
+// Delete ratings.
+func (ratingData *RatingData) DeleteRatings(restaurantID uuid.UUID, dishID uuid.UUID) error {
+	result := ratingData.Db.Where("dish_id = ? AND restaurant_id = ?", dishID, restaurantID).Delete(&Rating{})
+	if result.Error != nil {
+		return result.Error
+	}
+	return nil
+}

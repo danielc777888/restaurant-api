@@ -15,6 +15,213 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/dishes": {
+            "get": {
+                "description": "list dishes",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "dishes"
+                ],
+                "summary": "List dishes",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "RestaurantID header",
+                        "name": "RestaurantID",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/api.dishResponse"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "create a dish",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "dishes"
+                ],
+                "summary": "Create a dish",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Authentication header",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "RestaurantID header",
+                        "name": "RestaurantID",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "Create dish",
+                        "name": "dish",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/api.createDishRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/api.dishResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "delete a dish",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "dishes"
+                ],
+                "summary": "Delete a dish",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Authentication header",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "RestaurantID header",
+                        "name": "RestaurantID",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Dish ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "patch": {
+                "description": "updated a dish",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "dishes"
+                ],
+                "summary": "Update a dish",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Authentication header",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "RestaurantID header",
+                        "name": "RestaurantID",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "Update dish",
+                        "name": "dish",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/api.updateDishRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/api.dishResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/dishes/:id": {
+            "get": {
+                "description": "get a dish",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "dishes"
+                ],
+                "summary": "Get a dish",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "RestaurantID header",
+                        "name": "RestaurantID",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Dish ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/api.dishResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/ratings": {
             "post": {
                 "description": "create a rating",
@@ -57,10 +264,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/api.ratingResponse"
-                            }
+                            "$ref": "#/definitions/api.ratingResponse"
                         }
                     }
                 }
@@ -168,6 +372,33 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "api.createDishRequest": {
+            "type": "object",
+            "required": [
+                "description",
+                "name",
+                "price",
+                "restaurantID"
+            ],
+            "properties": {
+                "description": {
+                    "type": "string",
+                    "maxLength": 200,
+                    "minLength": 3
+                },
+                "name": {
+                    "type": "string",
+                    "maxLength": 20,
+                    "minLength": 3
+                },
+                "price": {
+                    "type": "integer"
+                },
+                "restaurantID": {
+                    "type": "string"
+                }
+            }
+        },
         "api.createRatingRequest": {
             "type": "object",
             "required": [
@@ -181,6 +412,26 @@ const docTemplate = `{
                     "minLength": 3
                 },
                 "dishID": {
+                    "type": "string"
+                }
+            }
+        },
+        "api.dishResponse": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "integer"
+                },
+                "restaurantID": {
                     "type": "string"
                 }
             }
@@ -269,6 +520,37 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "api.updateDishRequest": {
+            "type": "object",
+            "required": [
+                "description",
+                "id",
+                "name",
+                "price",
+                "restaurantID"
+            ],
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string",
+                    "maxLength": 20,
+                    "minLength": 3
+                },
+                "name": {
+                    "type": "string",
+                    "maxLength": 200,
+                    "minLength": 3
+                },
+                "price": {
+                    "type": "integer"
+                },
+                "restaurantID": {
                     "type": "string"
                 }
             }

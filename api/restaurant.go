@@ -39,7 +39,7 @@ func GetRestaurantHeader(ginContext *gin.Context) (uuid.UUID, error) {
 	return restaurantID, nil
 }
 
-// LisRestaurants godoc
+// ListRestaurants godoc
 // @Summary      List restaurants
 // @Description  list restaurants
 // @Tags         restaurants

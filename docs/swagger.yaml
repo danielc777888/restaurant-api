@@ -1,4 +1,24 @@
 definitions:
+  api.createDishRequest:
+    properties:
+      description:
+        maxLength: 200
+        minLength: 3
+        type: string
+      name:
+        maxLength: 20
+        minLength: 3
+        type: string
+      price:
+        type: integer
+      restaurantID:
+        type: string
+    required:
+    - description
+    - name
+    - price
+    - restaurantID
+    type: object
   api.createRatingRequest:
     properties:
       description:
@@ -10,6 +30,19 @@ definitions:
     required:
     - description
     - dishID
+    type: object
+  api.dishResponse:
+    properties:
+      description:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      price:
+        type: integer
+      restaurantID:
+        type: string
     type: object
   api.loggedInUserResponse:
     properties:
@@ -70,6 +103,29 @@ definitions:
       name:
         type: string
     type: object
+  api.updateDishRequest:
+    properties:
+      description:
+        type: string
+      id:
+        maxLength: 20
+        minLength: 3
+        type: string
+      name:
+        maxLength: 200
+        minLength: 3
+        type: string
+      price:
+        type: integer
+      restaurantID:
+        type: string
+    required:
+    - description
+    - id
+    - name
+    - price
+    - restaurantID
+    type: object
   api.userResponse:
     properties:
       emailAddress:
@@ -86,6 +142,145 @@ definitions:
 info:
   contact: {}
 paths:
+  /dishes:
+    delete:
+      consumes:
+      - application/json
+      description: delete a dish
+      parameters:
+      - description: Authentication header
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: RestaurantID header
+        in: header
+        name: RestaurantID
+        required: true
+        type: string
+      - description: Dish ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: Delete a dish
+      tags:
+      - dishes
+    get:
+      consumes:
+      - application/json
+      description: list dishes
+      parameters:
+      - description: RestaurantID header
+        in: header
+        name: RestaurantID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/api.dishResponse'
+            type: array
+      summary: List dishes
+      tags:
+      - dishes
+    patch:
+      consumes:
+      - application/json
+      description: updated a dish
+      parameters:
+      - description: Authentication header
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: RestaurantID header
+        in: header
+        name: RestaurantID
+        required: true
+        type: string
+      - description: Update dish
+        in: body
+        name: dish
+        required: true
+        schema:
+          $ref: '#/definitions/api.updateDishRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.dishResponse'
+      summary: Update a dish
+      tags:
+      - dishes
+    post:
+      consumes:
+      - application/json
+      description: create a dish
+      parameters:
+      - description: Authentication header
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: RestaurantID header
+        in: header
+        name: RestaurantID
+        required: true
+        type: string
+      - description: Create dish
+        in: body
+        name: dish
+        required: true
+        schema:
+          $ref: '#/definitions/api.createDishRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.dishResponse'
+      summary: Create a dish
+      tags:
+      - dishes
+  /dishes/:id:
+    get:
+      consumes:
+      - application/json
+      description: get a dish
+      parameters:
+      - description: RestaurantID header
+        in: header
+        name: RestaurantID
+        required: true
+        type: string
+      - description: Dish ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.dishResponse'
+      summary: Get a dish
+      tags:
+      - dishes
   /ratings:
     post:
       consumes:
@@ -114,9 +309,7 @@ paths:
         "200":
           description: OK
           schema:
-            items:
-              $ref: '#/definitions/api.ratingResponse'
-            type: array
+            $ref: '#/definitions/api.ratingResponse'
       summary: Create a rating
       tags:
       - ratings

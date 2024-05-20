@@ -38,7 +38,7 @@ func NewRatingAPI(Service *service.RatingService) *RatingAPI {
 // @Param		 Authorization	header		string	true	"Authentication header"
 // @Param		 RestaurantID	header		string	true	"RestaurantID header"
 // @Param		 rating body    api.createRatingRequest   true  "Create rating"
-// @Success      200  {array}   api.ratingResponse
+// @Success      200  {object}   api.ratingResponse
 // @Router       /ratings [post]
 func (api *RatingAPI) CreateRating(ginContext *gin.Context) {
 
