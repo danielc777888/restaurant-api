@@ -85,5 +85,3 @@ You can configure prometheus via the provided prometheus.yml file.
 Please organise, design, test, and document your code as if it were going into production - then push your changes to the Main branch. After you have pushed your code, you may submit the assignment on the assignment page.
 
 Best of luck, and happy coding!
-
-The Bash Team
